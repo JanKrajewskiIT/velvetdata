@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
-    "@jankrajewskiit/configs": "^1.1.1",
+    "@jankrajewskiit/configs": "^1.1.2",
     "@jankrajewskiit/ui": "^2.0.9",
     "@types/node": "^25.6.0",
     "eslint": "^9.39.4",
