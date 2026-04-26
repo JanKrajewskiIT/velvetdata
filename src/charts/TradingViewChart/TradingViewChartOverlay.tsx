@@ -1,8 +1,7 @@
+import type { Props } from '@jankrajewskiit/ui';
 import type { JSX } from 'solid-js';
 import { For, splitProps } from 'solid-js';
 
-
-import type { Props } from '@jankrajewskiit/ui';
 import styles from './TradingViewChartOverlay.module.css';
 
 interface ProjectedTrendLine {

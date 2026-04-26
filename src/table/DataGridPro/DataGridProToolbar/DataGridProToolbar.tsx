@@ -1,8 +1,7 @@
-import { type Accessor, For, type JSX, Show } from 'solid-js';
-
-
 import type { Props } from '@jankrajewskiit/ui';
 import { Button, Checkbox, classNames, Input, Text, useI18n } from '@jankrajewskiit/ui';
+import { type Accessor, For, type JSX, Show } from 'solid-js';
+
 import styles from './DataGridProToolbar.module.css';
 
 interface DataGridProToolbarColumn {

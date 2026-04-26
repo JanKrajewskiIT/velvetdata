@@ -1,8 +1,7 @@
+import { Checkbox, classNames, useI18n } from '@jankrajewskiit/ui';
 import type { JSX } from 'solid-js';
 import { type Accessor, For, Show } from 'solid-js';
 
-
-import { Checkbox, classNames, useI18n } from '@jankrajewskiit/ui';
 import type { DataGridProColumn } from '../DataGridPro.types';
 import styles from './DataGridProBody.module.css';
 

@@ -1,7 +1,5 @@
-import type { JSX } from 'solid-js';
-
 import type { TabularSortDirection } from '@jankrajewskiit/ui';
-
+import type { JSX } from 'solid-js';
 
 export type DataGridProSortDirection = TabularSortDirection;
 export type DataGridProColumnPin = 'left' | 'right' | null;

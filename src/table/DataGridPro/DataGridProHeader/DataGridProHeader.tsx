@@ -1,8 +1,7 @@
+import { Button, Checkbox, classNames, Text, useI18n } from '@jankrajewskiit/ui';
 import { IoCaretDown, IoCaretUp } from 'solid-icons/io';
 import { type Accessor, For, type JSX, Show } from 'solid-js';
 
-
-import { Button, Checkbox, classNames, Text, useI18n } from '@jankrajewskiit/ui';
 import type { DataGridProColumn } from '../DataGridPro.types';
 import styles from './DataGridProHeader.module.css';
 

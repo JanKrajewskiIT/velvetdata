@@ -1,6 +1,6 @@
-
 import type { Props } from '@jankrajewskiit/ui';
 import { Card, classNames } from '@jankrajewskiit/ui';
+
 import styles from './DataGridPro.module.css';
 import type {
   DataGridProColumn,

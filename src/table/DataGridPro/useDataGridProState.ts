@@ -1,9 +1,8 @@
+import type { Props } from '@jankrajewskiit/ui';
+import { filterRows, sortRows, useClickOutside, useEscapeKey } from '@jankrajewskiit/ui';
 import type { JSX } from 'solid-js';
 import { batch, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js';
 
-
-import type { Props } from '@jankrajewskiit/ui';
-import { filterRows, sortRows, useClickOutside, useEscapeKey } from '@jankrajewskiit/ui';
 import type {
   DataGridProColumn,
   DataGridProColumnPin,

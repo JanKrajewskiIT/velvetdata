@@ -1,8 +1,7 @@
-import { For } from 'solid-js';
-
-
 import type { Props } from '@jankrajewskiit/ui';
 import { Text } from '@jankrajewskiit/ui';
+import { For } from 'solid-js';
+
 import styles from './TradingViewChartMetrics.module.css';
 
 interface TradingViewChartMetricsProps {

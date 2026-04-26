@@ -1,7 +1,6 @@
 import type { DivCoreNativeProps } from '@jankrajewskiit/ui';
 import type { UTCTimestamp } from 'lightweight-charts';
 
-
 export interface TradingViewChartPoint {
   time: UTCTimestamp;
   open: number;

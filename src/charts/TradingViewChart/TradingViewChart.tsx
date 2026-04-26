@@ -19,7 +19,6 @@ import {
 import type { JSX } from 'solid-js';
 import { batch, createEffect, createMemo, createSignal, on, onCleanup, onMount, splitProps, untrack } from 'solid-js';
 
-
 import styles from './TradingViewChart.module.css';
 import type {
   TradingViewChartPoint,

@@ -1,10 +1,9 @@
+import type { DivCoreNativeProps, Props, SelectOption } from '@jankrajewskiit/ui';
+import { Button, Card, classNames, FormField, Heading, Icon, Select, Text, useI18n } from '@jankrajewskiit/ui';
 import { IoAdd } from 'solid-icons/io';
 import type { JSX } from 'solid-js';
 import { createMemo, For, Show, splitProps } from 'solid-js';
 
-
-import type { DivCoreNativeProps, Props, SelectOption } from '@jankrajewskiit/ui';
-import { Button, Card, classNames, FormField, Heading, Icon, Select, Text, useI18n } from '@jankrajewskiit/ui';
 import styles from './QueryBuilder.module.css';
 import {
   appendQueryBuilderRule,

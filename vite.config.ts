@@ -6,12 +6,7 @@ export default defineConfig(async () =>
     {},
     {
       fileName: 'velvet-data',
-      externalPackages: [
-        'solid-js',
-        'solid-icons',
-        'lightweight-charts',
-        '@jankrajewskiit/ui',
-      ],
+      externalPackages: ['solid-js', 'solid-icons', 'lightweight-charts', '@jankrajewskiit/ui'],
       dts: { tsconfigPath: './tsconfig.app.json' },
     },
   ),

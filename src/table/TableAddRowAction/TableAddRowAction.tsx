@@ -1,8 +1,7 @@
-import type { JSX } from 'solid-js';
-
-
 import type { Props } from '@jankrajewskiit/ui';
 import { classNames, TableCell, TableRow, Text } from '@jankrajewskiit/ui';
+import type { JSX } from 'solid-js';
+
 import styles from './TableAddRowAction.module.css';
 
 interface TableAddRowActionProps {

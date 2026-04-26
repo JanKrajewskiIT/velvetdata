@@ -1,9 +1,8 @@
+import type { SelectOption } from '@jankrajewskiit/ui';
+import { FormField, IconButton, Input, Select, useI18n } from '@jankrajewskiit/ui';
 import { IoArrowDown, IoArrowUp, IoTrash } from 'solid-icons/io';
 import { createMemo, type JSX, Show } from 'solid-js';
 
-
-import type { SelectOption } from '@jankrajewskiit/ui';
-import { FormField, IconButton, Input, Select, useI18n } from '@jankrajewskiit/ui';
 import type { QueryBuilderField, QueryBuilderOperator, QueryBuilderRule } from './QueryBuilder';
 import styles from './QueryBuilder.module.css';
 import { requiresValue } from './QueryBuilder.utils';

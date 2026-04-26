@@ -1,8 +1,7 @@
-import { For } from 'solid-js';
-
-
 import type { Props } from '@jankrajewskiit/ui';
 import { Button, Heading } from '@jankrajewskiit/ui';
+import { For } from 'solid-js';
+
 import styles from './TradingViewChartToolbar.module.css';
 
 export interface TradingViewChartToolbarToggle {

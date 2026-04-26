@@ -1,9 +1,8 @@
+import type { DivCoreNativeProps, Props, SelectOption } from '@jankrajewskiit/ui';
+import { Button, Card, Checkbox, classNames, Heading, IconButton, Select, Text, useI18n } from '@jankrajewskiit/ui';
 import { IoArrowDown, IoArrowUp } from 'solid-icons/io';
 import { batch, createMemo, For, Show, splitProps } from 'solid-js';
 
-
-import type { DivCoreNativeProps, Props, SelectOption } from '@jankrajewskiit/ui';
-import { Button, Card, Checkbox, classNames, Heading, IconButton, Select, Text, useI18n } from '@jankrajewskiit/ui';
 import styles from './ColumnManager.module.css';
 
 export type ColumnManagerPin = 'left' | 'right' | null;
