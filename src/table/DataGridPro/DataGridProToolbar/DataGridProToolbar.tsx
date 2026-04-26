@@ -48,17 +48,17 @@ const DataGridProToolbar = (props: Props<DataGridProToolbarProps>) => {
               type="search"
               value={props.filterQuery()}
               onInput={props.onFilterInput}
-              placeholder={ts('table.filterRows')}
+              placeholder={ts('dataGrid.filterRows')}
               class={classNames(styles.filterWrap, styles.filterInput)}
             />
           </Show>
           <div class={styles.summary}>
             <Text as="span" variant="labelMd" tone="secondary" class={styles.resultsCount}>
-              {ts('table.rowsCount', { count: props.rowCount() })}
+              {ts('dataGrid.rowsCount', { count: props.rowCount() })}
             </Text>
             <Show when={props.selectable() && props.selectedCount() > 0}>
               <Text as="span" variant="caption" tone="primary" class={styles.selectionSummary}>
-                {ts('table.selectedCount', { count: props.selectedCount() })}
+                {ts('dataGrid.selectedCount', { count: props.selectedCount() })}
               </Text>
             </Show>
           </div>
@@ -82,14 +82,14 @@ const DataGridProToolbar = (props: Props<DataGridProToolbarProps>) => {
               onClick={props.onClearSelection}
               disabled={props.selectedCount() === 0}
             >
-              {ts('table.clearSelection')}
+              {ts('dataGrid.clearSelection')}
             </Button>
             <Button variant="ghost" size="sm" class={styles.toolbarButton} onClick={props.onResetView}>
-              {ts('table.resetView')}
+              {ts('dataGrid.resetView')}
             </Button>
             <Show when={props.hasPersistence()}>
               <Button variant="ghost" size="sm" class={styles.toolbarButton} onClick={props.onResetPersistedLayout}>
-                {ts('table.resetSavedLayout')}
+                {ts('dataGrid.resetSavedLayout')}
               </Button>
             </Show>
           </div>
@@ -117,7 +117,7 @@ const DataGridProToolbar = (props: Props<DataGridProToolbarProps>) => {
               aria-haspopup="dialog"
               aria-expanded={props.columnMenuOpen() ? 'true' : 'false'}
             >
-              {ts('table.columns')}
+              {ts('dataGrid.columns')}
             </Button>
             <Show when={props.columnMenuOpen()}>
               <div class={styles.columnMenu} role="group" aria-label={ts('columnManager.columnVisibility')}>

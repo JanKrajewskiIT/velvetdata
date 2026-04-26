@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
 import { createSolidLibViteConfig } from '@jankrajewskiit/configs/vite';
+import { defineConfig } from 'vite';
 
 export default defineConfig(async () =>
   createSolidLibViteConfig(

@@ -44,7 +44,7 @@ const DataGridProBody = <T extends Record<string, unknown>>(props: DataGridProBo
       when={props.hasRows()}
       fallback={
         <div class={styles.empty} role="status" style={emptyStyle()}>
-          {ts('table.noRows')}
+          {ts('dataGrid.noRows')}
         </div>
       }
     >
@@ -69,7 +69,7 @@ const DataGridProBody = <T extends Record<string, unknown>>(props: DataGridProBo
                       checked={props.selectedSet().has(entry.id)}
                       onClick={handleCheckboxClick}
                       onChange={() => props.onToggleRow(entry.id)}
-                      aria-label={ts('table.selectRow', { id: entry.id })}
+                      aria-label={ts('dataGrid.selectRow', { id: entry.id })}
                     />
                   </div>
                 </Show>

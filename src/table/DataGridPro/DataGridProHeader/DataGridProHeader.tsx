@@ -43,7 +43,7 @@ const DataGridProHeader = <T extends Record<string, unknown>>(props: DataGridPro
             class={styles.selectionCheckbox}
             checked={props.allVisibleSelected()}
             onChange={props.onToggleAllVisible}
-            aria-label={ts('table.selectAllVisibleRows')}
+            aria-label={ts('dataGrid.selectAllVisibleRows')}
           />
         </div>
       </Show>
@@ -98,7 +98,7 @@ const DataGridProHeader = <T extends Record<string, unknown>>(props: DataGridPro
                 size="sm"
                 iconOnly
                 class={styles.resizeHandle}
-                aria-label={ts('table.resizeColumn', { label: column.header })}
+                aria-label={ts('dataGrid.resizeColumn', { label: column.header })}
                 onMouseDown={(event) => props.onResizeStart(key(), event)}
                 onClick={handleResizeClick}
               >

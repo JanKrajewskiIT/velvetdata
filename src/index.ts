@@ -15,6 +15,7 @@ export type { TradingViewPollingFeedOptions } from './hooks/useTradingViewPollin
 export { default as useTradingViewPollingFeed } from './hooks/useTradingViewPollingFeed';
 export type { TradingViewWsFeedOptions } from './hooks/useTradingViewWsFeed';
 export { default as useTradingViewWsFeed } from './hooks/useTradingViewWsFeed';
+export { en, pl, type VelvetDataDictionary } from './i18n';
 export type {
   ColumnManagerColumn,
   ColumnManagerPin,

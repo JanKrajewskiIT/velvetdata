@@ -69,7 +69,7 @@ const ColumnManager = (props: Props<ColumnManagerOwnProps>) => {
   const isVisible = (key: string) => local.visibility[key] !== false;
   const isHidable = (column: ColumnManagerColumn) => column.canHide !== false;
   const visibleCount = createMemo(() => orderedColumns().filter((column) => isVisible(column.key)).length);
-  const panelLabel = createMemo(() => local.label ?? ts('table.columns'));
+  const panelLabel = createMemo(() => local.label ?? ts('dataGrid.columns'));
   const pinOptions = createMemo<SelectOption[]>(() => [
     { value: '', label: ts('common.none') },
     { value: 'left', label: ts('dir.left') },

@@ -1,6 +1,6 @@
 {
   "name": "@jankrajewskiit/data",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -44,7 +44,7 @@
     "prepare": "husky"
   },
   "peerDependencies": {
-    "@jankrajewskiit/ui": ">=2.0.9",
+    "@jankrajewskiit/ui": ">=3.0.0",
     "lightweight-charts": ">=5.1.0",
     "solid-icons": ">=1.2.0",
     "solid-js": ">=1.9"
@@ -60,7 +60,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@jankrajewskiit/configs": "^1.1.2",
-    "@jankrajewskiit/ui": "^2.0.9",
+    "@jankrajewskiit/ui": "^3.0.5",
     "@types/node": "^25.6.0",
     "eslint": "^9.39.4",
     "husky": "^9.1.7",
