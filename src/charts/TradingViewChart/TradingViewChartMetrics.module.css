@@ -1,0 +1,13 @@
+.ohlcPanel {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.ohlcItem {
+  font-variant-numeric: tabular-nums;
+}

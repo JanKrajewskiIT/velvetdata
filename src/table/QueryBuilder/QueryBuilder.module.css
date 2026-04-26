@@ -1,0 +1,71 @@
+.card {
+  display: grid;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.headerCopy {
+  display: grid;
+  gap: var(--spacing-2xs);
+}
+
+.headerActions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.addButtonContent {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2xs);
+}
+
+.combinatorField {
+  width: min(100%, 320px);
+}
+
+.rules {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.rule {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(180px, 1fr) minmax(180px, 1fr) auto;
+  align-items: end;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  padding: var(--spacing-xs);
+}
+
+.ruleActions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2xs);
+}
+
+.inputDisabled {
+  opacity: 0.7;
+}
+
+@media (width < 900px) {
+  .rule {
+    grid-template-columns: 1fr;
+  }
+
+  .ruleActions {
+    justify-content: flex-end;
+  }
+}
