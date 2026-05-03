@@ -43,7 +43,7 @@ const QueryBuilderRuleRow = (props: QueryBuilderRuleRowProps) => {
   ]);
 
   return (
-    <div class={styles.rule}>
+    <div role="group" class={styles.rule}>
       <FormField>
         {(fieldProps) => (
           <Select

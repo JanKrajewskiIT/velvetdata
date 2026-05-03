@@ -271,16 +271,6 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
       `BB Low: ${toFixed(indicators?.bbLower ?? 0)}`,
     ];
   });
-  const clearLabel = () => ts('common.clear');
-  const bbUpperTitle = () => ts('trading.bbUpper');
-  const bbBasisTitle = () => ts('trading.bbBasis');
-  const bbLowerTitle = () => ts('trading.bbLower');
-  const smaTitle = () => ts('trading.sma20');
-  const emaTitle = () => ts('trading.ema50');
-  const rsiTitle = () => ts('trading.rsi14');
-  const macdTitle = () => ts('trading.macd');
-  const macdSignalTitle = () => ts('trading.macdSignal');
-  const macdHistTitle = () => ts('trading.macdHist');
 
   let wrapperRef: HTMLDivElement | undefined;
   let chartHostRef: HTMLDivElement | undefined;
@@ -306,9 +296,9 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
   let sizeChangeHandler: (() => void) | undefined;
   let feedUnsubscribe: (() => void) | undefined;
   let feedTimer: ReturnType<typeof setInterval> | undefined;
-  let latestDataByTime = new Map<string, TradingViewChartPoint>();
-  let latestBar: TradingViewChartPoint | undefined;
-  let skipFullRenderAtTime: UTCTimestamp | undefined;
+  const [latestBar, setLatestBar] = createSignal<TradingViewChartPoint | undefined>();
+  const [latestDataByTime, setLatestDataByTime] = createSignal(new Map<string, TradingViewChartPoint>());
+  const [skipFullRenderAtTime, setSkipFullRenderAtTime] = createSignal<UTCTimestamp | undefined>();
 
   const applyChartTheme = () => {
     if (
@@ -683,36 +673,48 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
       1,
     );
     bbUpperSeries = chart.addSeries(LineSeries, {
-      title: bbUpperTitle(),
+      title: ts('trading.bbUpper'),
       priceLineVisible: false,
       lastValueVisible: false,
     });
     bbBasisSeries = chart.addSeries(LineSeries, {
-      title: bbBasisTitle(),
+      title: ts('trading.bbBasis'),
       priceLineVisible: false,
       lastValueVisible: false,
     });
     bbLowerSeries = chart.addSeries(LineSeries, {
-      title: bbLowerTitle(),
+      title: ts('trading.bbLower'),
       priceLineVisible: false,
       lastValueVisible: false,
     });
-    smaSeries = chart.addSeries(LineSeries, { title: smaTitle(), priceLineVisible: false, lastValueVisible: false });
-    emaSeries = chart.addSeries(LineSeries, { title: emaTitle(), priceLineVisible: false, lastValueVisible: false });
-    rsiSeries = chart.addSeries(LineSeries, { title: rsiTitle(), priceLineVisible: false, lastValueVisible: false }, 2);
+    smaSeries = chart.addSeries(LineSeries, {
+      title: ts('trading.sma20'),
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+    emaSeries = chart.addSeries(LineSeries, {
+      title: ts('trading.ema50'),
+      priceLineVisible: false,
+      lastValueVisible: false,
+    });
+    rsiSeries = chart.addSeries(
+      LineSeries,
+      { title: ts('trading.rsi14'), priceLineVisible: false, lastValueVisible: false },
+      2,
+    );
     macdSeries = chart.addSeries(
       LineSeries,
-      { title: macdTitle(), priceLineVisible: false, lastValueVisible: false },
+      { title: ts('trading.macd'), priceLineVisible: false, lastValueVisible: false },
       3,
     );
     macdSignalSeries = chart.addSeries(
       LineSeries,
-      { title: macdSignalTitle(), priceLineVisible: false, lastValueVisible: false },
+      { title: ts('trading.macdSignal'), priceLineVisible: false, lastValueVisible: false },
       3,
     );
     macdHistogramSeries = chart.addSeries(
       HistogramSeries,
-      { title: macdHistTitle(), priceLineVisible: false, lastValueVisible: false },
+      { title: ts('trading.macdHist'), priceLineVisible: false, lastValueVisible: false },
       3,
     );
     volumeSeries.priceScale().applyOptions({ scaleMargins: { top: 0.7, bottom: 0 } });
@@ -744,7 +746,7 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
       if (!candleSeries) return;
       const data = params.seriesData.get(candleSeries);
       if (data && isCandlestickData(data)) {
-        setHoveredBar(latestDataByTime.get(timeKey(data.time)));
+        setHoveredBar(untrack(latestDataByTime).get(timeKey(data.time)));
         return;
       }
       setHoveredBar(undefined);
@@ -795,11 +797,11 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
   );
 
   createEffect(() => {
-    latestBar = runtimeData().at(-1);
+    setLatestBar(runtimeData().at(-1));
   });
 
   createEffect(() => {
-    latestDataByTime = chartDataByTime();
+    setLatestDataByTime(chartDataByTime());
   });
 
   createEffect(
@@ -839,7 +841,7 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
     const context = (): TradingViewFeedContext => ({
       symbol: chartSymbol(),
       interval: activeInterval(),
-      lastBar: latestBar,
+      lastBar: latestBar(),
     });
     const maxPoints = local.maxPoints ?? 800;
     const append = (payload: TradingViewChartPoint | TradingViewChartPoint[]) => {
@@ -859,7 +861,7 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
         mergedTail?.time === latestIncoming?.time &&
         (latestIncoming ? updateSeriesIncrementally(latestIncoming) : false);
       if (canIncremental && latestIncoming) {
-        skipFullRenderAtTime = latestIncoming.time;
+        setSkipFullRenderAtTime(latestIncoming.time);
       }
 
       batch(() => {
@@ -868,9 +870,10 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
       });
     };
 
-    if (local.liveFeed.mode === 'polling' && local.liveFeed.poll) {
+    if (local.liveFeed.mode === 'polling') {
+      const poll = local.liveFeed.poll;
       const runPoll = async () => {
-        const result = await local.liveFeed?.poll?.(context());
+        const result = await poll(context());
         if (!result) return;
         append(result);
       };
@@ -883,7 +886,7 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
       );
     }
 
-    if (local.liveFeed.mode === 'websocket' && local.liveFeed.subscribe) {
+    if (local.liveFeed.mode === 'websocket') {
       const subscribe = local.liveFeed.subscribe;
       const handleFeedPayload = (payload: TradingViewChartPoint | TradingViewChartPoint[]) => {
         append(payload);
@@ -891,7 +894,7 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
       const initialContext: TradingViewFeedContext = {
         symbol: chartSymbol(),
         interval: activeInterval(),
-        lastBar: latestBar,
+        lastBar: latestBar(),
       };
       const unsubscribe = subscribe(handleFeedPayload, initialContext);
       if (unsubscribe) feedUnsubscribe = unsubscribe;
@@ -899,14 +902,21 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
   });
 
   createEffect(
-    on([showVolume, showSma, showEma, showRsi, showMacd, showBb, chartData] as const, ([, , , , , , data]) => {
+    on(chartData, (data) => {
       const latestTime = data.at(-1)?.time;
-      if (latestTime && skipFullRenderAtTime === latestTime) {
-        skipFullRenderAtTime = undefined;
+      if (latestTime && skipFullRenderAtTime() === latestTime) {
+        setSkipFullRenderAtTime(undefined);
         fitChart(false);
         return;
       }
-      skipFullRenderAtTime = undefined;
+      setSkipFullRenderAtTime(undefined);
+      renderSeriesData();
+      fitChart(false);
+    }),
+  );
+
+  createEffect(
+    on([showVolume, showSma, showEma, showRsi, showMacd, showBb] as const, () => {
       renderSeriesData();
       fitChart(false);
     }),
@@ -922,7 +932,7 @@ const TradingViewChart = (props: Props<TradingViewChartProps>) => {
         onIntervalSelect={setActiveInterval}
         indicatorControls={toggleIndicatorControls()}
         drawingControls={drawingControls()}
-        clearLabel={clearLabel()}
+        clearLabel={ts('common.clear')}
         onClear={clearCurrentTool}
       />
 

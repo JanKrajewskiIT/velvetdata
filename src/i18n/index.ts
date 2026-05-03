@@ -1,24 +1,3 @@
-/**
- * Data-domain i18n dictionaries owned by `@jankrajewskiit/data`.
- *
- * Apps compose these layers explicitly:
- *
- * @example
- *   import { en as uiEn, pl as uiPl, defineDictionaries } from '@jankrajewskiit/ui';
- *   import { en as dataEn, pl as dataPl } from '@jankrajewskiit/data';
- *
- *   const dictionaries = defineDictionaries({
- *     en: [uiEn, dataEn],
- *     pl: [uiPl, dataPl],
- *   });
- *
- *   <VelvetProvider dictionaries={dictionaries}>...</VelvetProvider>
- *
- * The TypeScript module augmentation below extends `VelvetI18nDictionary`
- * so that every `useI18n().ts(...)` callsite in apps consuming `@jankrajewskiit/data`
- * gains autocomplete and compile-time checking for these keys.
- */
-
 import { defineDictionary, type TranslationOf } from '@jankrajewskiit/ui';
 
 export const en = defineDictionary({
@@ -86,8 +65,6 @@ export const en = defineDictionary({
   },
 });
 
-/** Shape of the data-domain dictionary, with widened string leaves so that
- *  other locales can supply different translations against the same key set. */
 export type VelvetDataDictionary = TranslationOf<typeof en>;
 
 export const pl: VelvetDataDictionary = {
@@ -156,6 +133,5 @@ export const pl: VelvetDataDictionary = {
 };
 
 declare module '@jankrajewskiit/ui' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface VelvetI18nDictionary extends VelvetDataDictionary {}
 }

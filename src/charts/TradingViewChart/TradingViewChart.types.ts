@@ -52,22 +52,29 @@ export interface TradingViewFeedContext {
   lastBar?: TradingViewChartPoint;
 }
 
-export interface TradingViewLiveFeedConfig {
-  mode: TradingViewLiveFeedMode;
+interface TradingViewPollingFeedConfig {
+  mode: 'polling';
   enabled?: boolean;
   intervalMs?: number;
-  poll?: (
+  poll: (
     context: TradingViewFeedContext,
   ) =>
     | TradingViewChartPoint
     | TradingViewChartPoint[]
     | null
     | Promise<TradingViewChartPoint | TradingViewChartPoint[] | null>;
-  subscribe?: (
+}
+
+interface TradingViewWebSocketFeedConfig {
+  mode: 'websocket';
+  enabled?: boolean;
+  subscribe: (
     emit: (bars: TradingViewChartPoint | TradingViewChartPoint[]) => void,
     context: TradingViewFeedContext,
   ) => (() => void) | undefined;
 }
+
+export type TradingViewLiveFeedConfig = TradingViewPollingFeedConfig | TradingViewWebSocketFeedConfig;
 
 export interface TradingViewChartProps extends DivCoreNativeProps {
   symbol?: string;

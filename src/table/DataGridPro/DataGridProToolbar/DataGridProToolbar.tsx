@@ -48,6 +48,7 @@ const DataGridProToolbar = (props: Props<DataGridProToolbarProps>) => {
               type="search"
               value={props.filterQuery()}
               onInput={props.onFilterInput}
+              aria-label={ts('dataGrid.filterRows')}
               placeholder={ts('dataGrid.filterRows')}
               class={classNames(styles.filterWrap, styles.filterInput)}
             />

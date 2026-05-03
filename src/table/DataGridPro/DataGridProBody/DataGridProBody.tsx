@@ -54,6 +54,7 @@ const DataGridProBody = <T extends Record<string, unknown>>(props: DataGridProBo
             {(entry) => (
               <div
                 role="row"
+                aria-rowindex={entry.index + 2}
                 aria-selected={props.selectable() ? props.selectedSet().has(entry.id) : undefined}
                 class={classNames(
                   styles.row,
