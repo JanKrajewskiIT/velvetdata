@@ -1,0 +1,74 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.toolbar,
+.controls,
+.metrics,
+.values {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.toolbar {
+  justify-content: space-between;
+}
+
+.metrics {
+  justify-content: space-between;
+  color: var(--fg-secondary);
+  font-size: var(--type-caption-size);
+  font-variant-numeric: tabular-nums;
+}
+
+.values {
+  margin: 0;
+  gap: var(--space-4);
+
+  & dt {
+    color: var(--fg-tertiary);
+  }
+
+  & dd {
+    margin: 0;
+    color: var(--fg-primary);
+    font-family: var(--font-mono);
+  }
+}
+
+.plot {
+  position: relative;
+  min-width: 0;
+  background: var(--bg-raised);
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.canvas {
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  background: var(--bg-raised);
+  border-radius: inherit;
+}
+
+.summary {
+  cursor: pointer;
+  color: var(--fg-secondary);
+  padding-block: var(--space-2);
+
+  &:focus-visible {
+    outline: var(--border-width-accent) solid var(--border-focus);
+    outline-offset: var(--space-1);
+  }
+}

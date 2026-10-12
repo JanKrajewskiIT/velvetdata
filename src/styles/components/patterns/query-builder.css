@@ -1,0 +1,20 @@
+.vui-qb{display:flex;flex-direction:column;gap:var(--space-3);min-width:0}
+.vui-qb__group{display:flex;flex-direction:column;gap:var(--space-2);min-width:0}
+.vui-qb__group--nested{flex:1;padding:var(--space-3);border:var(--border-width) solid var(--border-subtle);border-radius:var(--radius-md);background:var(--bg-subtle)}
+.vui-qb__row{display:grid;grid-template-columns:64px minmax(0,1fr);gap:var(--space-2);align-items:start}
+.vui-qb__lead{display:flex;align-items:center;height:var(--control-height-sm);font:var(--type-label);color:var(--fg-tertiary);text-transform:lowercase}
+.vui-qb__lead>span:first-letter{text-transform:uppercase}
+.vui-qb__comb{color:var(--fg-brand);text-transform:lowercase}
+.vui-qb__rule{display:grid;grid-template-columns:minmax(120px,1fr) minmax(110px,.8fr) minmax(120px,1.2fr) var(--control-height-sm);gap:var(--space-2);align-items:center}
+.vui-qb__value:empty{display:block}
+.vui-qb__add{display:flex;flex-wrap:wrap;gap:var(--space-1);margin-left:calc(var(--space-16) + var(--space-2) - var(--space-3))}
+.vui-qb__group--nested>.vui-qb__add{margin-left:calc(var(--space-16) + var(--space-2) - var(--space-3))}
+.vui-qb__drop{margin-left:auto;color:var(--status-danger-fg)}
+.vui-qb__summary{display:flex;gap:var(--space-2);align-items:baseline;padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);background:var(--bg-sunken);font:var(--type-caption);color:var(--fg-secondary)}
+.vui-qb__summary code{font:var(--type-code);font-size:var(--type-caption-size);color:var(--fg-primary);overflow-wrap:anywhere}
+@media (max-width:599px){.vui-qb__row{grid-template-columns:1fr}.vui-qb__lead{height:auto}.vui-qb__rule{grid-template-columns:1fr 1fr}.vui-qb__value{grid-column:1/2}.vui-qb__add{margin-left:calc(var(--space-3) * -1)}.vui-qb__row--move{grid-template-columns:1fr}.vui-qb__move{height:auto}}
+.vui-qb__rule>div{min-width:0}
+.vui-qb__row--move{grid-template-columns:64px minmax(0,1fr) auto}
+.vui-qb__move{display:flex;gap:2px;align-items:center;height:var(--control-height-sm)}
+.vui-qb__empty{padding:var(--space-2) var(--space-3);border:var(--border-width) dashed var(--border-default);border-radius:var(--radius-md);font:var(--type-body-sm);color:var(--fg-tertiary)}
+.vui-qb__add .vui-qb__drop:not(:first-child)~.vui-qb__drop{margin-left:0}

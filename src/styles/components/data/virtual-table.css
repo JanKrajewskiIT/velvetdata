@@ -1,0 +1,12 @@
+/* VirtualTable */
+.vui-vtable{display:flex;flex-direction:column;border:var(--border-width) solid var(--border-default);border-radius:var(--radius-lg);clip-path:inset(0 round var(--radius-lg));background:var(--bg-raised);overflow:hidden;font-size:var(--type-body-sm-size)}
+.vui-vtable__row{display:grid;align-items:center;left:0;right:0;border-bottom:var(--border-width) solid var(--border-subtle)}
+.vui-vtable__body .vui-vtable__row{position:absolute;top:0;outline:0}
+.vui-vtable__row--head{height:38px;background:var(--bg-subtle);font-size:var(--type-caption-size);font-weight:var(--type-title-weight);color:var(--fg-secondary);border-bottom-color:var(--border-default)}
+.vui-vtable__row--click{cursor:pointer}
+.vui-vtable__body .vui-vtable__row:hover{background:var(--bg-hover)}
+.vui-vtable__row--focus{box-shadow:inset var(--border-width-accent) 0 0 var(--border-focus);background:var(--bg-hover)}
+.vui-vtable__cell{min-width:0;padding:0 var(--cell-px);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.vui-vtable__body{position:relative;overflow-y:auto;outline:0}
+.vui-vtable__body:focus-visible{box-shadow:inset var(--focus-ring)}
+.vui-vtable__foot{display:flex;justify-content:space-between;gap:var(--space-3);padding:var(--space-2) var(--cell-px);border-top:var(--border-width) solid var(--border-default);background:var(--bg-subtle);font:var(--type-body-weight) var(--type-overline-size)/1.4 var(--font-mono);color:var(--fg-tertiary)}
