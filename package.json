@@ -1,6 +1,6 @@
 {
   "name": "@jankrajewskiit/data",
-  "version": "3.4.6",
+  "version": "3.4.7",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -53,10 +53,10 @@
     "prepare": "husky"
   },
   "peerDependencies": {
-    "@jankrajewskiit/ui": ">=3.4.6 <4",
+    "@jankrajewskiit/ui": ">=3.4.7 <4",
     "lightweight-charts": ">=5.1.0 <6",
     "solid-js": ">=1.9.0 <2",
-    "@jankrajewskiit/i18n": "^3.3.0"
+    "@jankrajewskiit/i18n": "^3.4.2"
   },
   "peerDependenciesMeta": {
     "lightweight-charts": {
@@ -66,8 +66,8 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@jankrajewskiit/configs": "^3.4.2",
-    "@jankrajewskiit/i18n": "^3.4.1",
-    "@jankrajewskiit/ui": "^3.4.6",
+    "@jankrajewskiit/i18n": "^3.4.3",
+    "@jankrajewskiit/ui": "^3.4.8",
     "@size-limit/file": "^14.2.0",
     "@types/node": "^26.6.5",
     "@typescript/native": "npm:typescript@^7.0.2",

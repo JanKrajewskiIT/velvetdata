@@ -44,9 +44,9 @@ await mountVelvetApp({
 
 Compose `velvetDataMessages` into the existing Velvet provider. Missing messages fall back to bundled English. Share one instance of `solid-js` and `@jankrajewskiit/i18n` with Velvet UI. The package's messages use the `velvetData` namespace.
 
-VelvetData now requires Velvet UI `>=3.4.6 <4`. Its shared class, state, focus, id, width and row helpers import from `@jankrajewskiit/ui/common`; local copies have been removed. The `RowKey`, `RowSort` and `StaticTranslate` exports remain compatible through the shared types. Translation fallback uses UI's dictionary-neutral `createLibraryMessages` factory with the composed English UI/Data dictionary.
+VelvetData 3.4.7 requires Velvet UI `>=3.4.7 <4` and I18n `^3.4.2`. Its shared class, state, focus, id, width and row helpers import from `@jankrajewskiit/ui/common`; local copies have been removed. The `RowKey`, `RowSort` and `StaticTranslate` exports remain compatible through the shared types. Translation fallback uses UI's dictionary-neutral `createLibraryMessages` factory with the composed English UI/Data dictionary. Missing provider messages retain interpolation, plural rules and rich-text handlers through the shared I18n formatters.
 
-UI 3.4.6 has been published with the shared entry point. Run `npm install --ignore-scripts --no-audit --no-fund` in VelvetData to refresh the installed UI package and lockfile, followed by `npm run verify`. UI 3.4.4 does not provide `/common`. Data's package version remains 3.4.2 in this worktree and must be advanced before publishing this next revision.
+UI and Data 3.4.6 are already published. The prepared 3.4.7 revision requires I18n 3.4.2, then UI 3.4.7, before its dependencies can be refreshed and checked. Follow the [release order](docs/migration.md#release-order); resolved lockfile entries still describe the installed releases until the package manager updates them.
 
 ## Trading chart
 
