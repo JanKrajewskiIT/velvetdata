@@ -1,8 +1,8 @@
 import { Checkbox } from '@jankrajewskiit/ui';
+import { cx } from '@jankrajewskiit/ui/common';
 import { createMemo, For, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import type { DataGridController } from './dataGridController';
 import { GridCell } from './GridCell';
 

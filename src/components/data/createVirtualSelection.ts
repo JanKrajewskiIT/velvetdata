@@ -1,5 +1,6 @@
+import { type RowKey, rowValue } from '@jankrajewskiit/ui/common';
+
 import { createVirtualKeys } from './createVirtualKeys';
-import { type RowKey, rowValue } from './rowData';
 import type { VirtualListConfig } from './virtualListTypes';
 
 const identityOf = (item: unknown): RowKey | undefined => {

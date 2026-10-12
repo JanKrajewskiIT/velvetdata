@@ -1,6 +1,7 @@
+import { cellText, rowValue } from '@jankrajewskiit/ui/common';
+
 import type { QueryGroup, QueryRule } from '../patterns/queryModel';
 import { VALUELESS_OPS } from '../patterns/queryModel';
-import { cellText, rowValue } from './rowData';
 
 type QueryNode = QueryRule | QueryGroup;
 

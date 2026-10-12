@@ -1,6 +1,7 @@
+import { columnName } from '@jankrajewskiit/ui/common';
+
 import type { DataGridProps, GridColumn } from './dataGridTypes';
 import { downloadCsv, toCsv } from './exportCsv';
-import { columnName } from './gridColumns';
 
 const EXPORT_FILE_NAME = 'export.csv';
 

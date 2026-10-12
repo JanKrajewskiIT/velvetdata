@@ -44,6 +44,10 @@ await mountVelvetApp({
 
 Compose `velvetDataMessages` into the existing Velvet provider. Missing messages fall back to bundled English. Share one instance of `solid-js` and `@jankrajewskiit/i18n` with Velvet UI. The package's messages use the `velvetData` namespace.
 
+VelvetData now requires Velvet UI `>=3.4.6 <4`. Its shared class, state, focus, id, width and row helpers import from `@jankrajewskiit/ui/common`; local copies have been removed. The `RowKey`, `RowSort` and `StaticTranslate` exports remain compatible through the shared types. Translation fallback uses UI's dictionary-neutral `createLibraryMessages` factory with the composed English UI/Data dictionary.
+
+UI 3.4.6 has been published with the shared entry point. Run `npm install --ignore-scripts --no-audit --no-fund` in VelvetData to refresh the installed UI package and lockfile, followed by `npm run verify`. UI 3.4.4 does not provide `/common`. Data's package version remains 3.4.2 in this worktree and must be advanced before publishing this next revision.
+
 ## Trading chart
 
 The root entry point owns UI and engine-neutral types. `@jankrajewskiit/data/tradingview` is the optional Lightweight Charts adapter; only this import requires `lightweight-charts` 5.x. Consumers may instead supply their own `TradingChartEngineFactory`.

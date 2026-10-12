@@ -1,7 +1,7 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
 import { type Accessor, createMemo } from 'solid-js';
 
 import type { VirtualKeys } from './createVirtualKeys';
-import type { RowKey } from './rowData';
 
 interface VirtualRecord<T> {
   item: T;

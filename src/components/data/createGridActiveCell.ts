@@ -1,8 +1,7 @@
+import { cellText, createFrameFocus, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
 import { type Accessor, createEffect, createMemo, createSignal, type Setter } from 'solid-js';
 
-import { createFrameFocus } from '../../hooks/createFrameFocus';
 import type { CellPosition, EditMove, GridColumn, GridRowChange } from './dataGridTypes';
-import { cellText, type RowKey, rowValue } from './rowData';
 
 export interface GridActiveCellOptions<T extends object> {
   getGrid: () => HTMLElement | undefined;

@@ -1,4 +1,5 @@
-import { columnWidthBounds, constrainColumnWidth } from '../../utils/columnWidth';
+import { columnWidthBounds, constrainColumnWidth } from '@jankrajewskiit/ui/common';
+
 import type { QueryField, QueryGroup, QueryNode } from '../patterns/queryModel';
 import { isQueryGroup, queryOperatorValues } from '../patterns/queryModel';
 import { reconcileColumnState } from './columnState';

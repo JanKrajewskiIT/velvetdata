@@ -1,13 +1,10 @@
 import { useI18n } from '@jankrajewskiit/i18n';
+import { cellText, clamp, createFrameFocus, cx, rowId, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
 import { createMemo, createSignal, For, type JSX, mergeProps, Show } from 'solid-js';
 
-import { createFrameFocus } from '../../hooks/createFrameFocus';
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
-import { clamp } from '../../utils/math';
 import { createVirtualKeys } from './createVirtualKeys';
 import { createVirtualRecord } from './createVirtualRecord';
-import { cellText, rowId, type RowKey, rowValue } from './rowData';
 import { DEFAULT_VIEWPORT_HEIGHT, nonnegativeInteger, positiveSize } from './virtualDimensions';
 import { isRowControl } from './virtualRowTarget';
 

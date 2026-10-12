@@ -1,4 +1,4 @@
-import { cellText, rowValue } from './rowData';
+import { cellText, rowValue } from '@jankrajewskiit/ui/common';
 
 const quote = (value: string): string => `"${value.replace(/"/gu, '""')}"`;
 

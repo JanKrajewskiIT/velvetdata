@@ -1,8 +1,9 @@
+import type { RowSort } from '@jankrajewskiit/ui/common';
+
 import type { QueryGroup, QueryNode } from '../patterns/queryModel';
 import { QUERY_OPERATOR_VALUES } from '../patterns/queryModel';
 import type { ColumnState } from './columnManagerTypes';
 import type { GridViewState } from './gridViewTypes';
-import type { RowSort } from './rowData';
 
 export const MAX_GRID_VIEW_BYTES = 1_000_000;
 const MAX_NODES = 500;

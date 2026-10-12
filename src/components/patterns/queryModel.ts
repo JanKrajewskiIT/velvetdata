@@ -1,6 +1,6 @@
 import type { I18nKey } from '@jankrajewskiit/i18n';
+import { createId } from '@jankrajewskiit/ui/common';
 
-import { createId } from '../../utils/id';
 import { englishText, type StaticTranslate } from './englishText';
 
 export interface QueryOperator {

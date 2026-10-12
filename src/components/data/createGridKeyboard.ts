@@ -1,11 +1,10 @@
+import { cellText, clamp, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
 import type { Accessor, JSX } from 'solid-js';
 
-import { clamp } from '../../utils/math';
 import type { GridActiveCell } from './createGridActiveCell';
 import type { GridExpansion } from './createGridExpansion';
 import type { GridSelection } from './createGridSelection';
 import type { GridColumn } from './dataGridTypes';
-import { cellText, type RowKey, rowValue } from './rowData';
 
 const PAGE_ROWS = 10;
 

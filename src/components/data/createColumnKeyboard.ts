@@ -1,4 +1,5 @@
-import { createFrameFocus } from '../../hooks/createFrameFocus';
+import { createFrameFocus } from '@jankrajewskiit/ui/common';
+
 import { useTranslate } from '../../i18n/useTranslate';
 import type { ColumnState } from './columnManagerTypes';
 import type { ColumnModel } from './createColumnModel';

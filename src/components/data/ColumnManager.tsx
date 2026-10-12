@@ -1,8 +1,8 @@
 import { Button, SearchInput } from '@jankrajewskiit/ui';
+import { cx } from '@jankrajewskiit/ui/common';
 import { createSignal, For, type JSX, mergeProps, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import type { ColumnManagerController } from './columnManagerController';
 import { ColumnManagerFooter } from './ColumnManagerFooter';
 import type { ColumnManagerProps } from './columnManagerTypes';

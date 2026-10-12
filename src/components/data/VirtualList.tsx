@@ -1,8 +1,8 @@
 import { EmptyText } from '@jankrajewskiit/ui';
+import { cx } from '@jankrajewskiit/ui/common';
 import { createMemo, For, type JSX, mergeProps, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import { createVirtualKeyboard } from './createVirtualKeyboard';
 import { createVirtualRecord } from './createVirtualRecord';
 import { createVirtualRows, DEFAULT_ITEM_HEIGHT, DEFAULT_OVERSCAN } from './createVirtualRows';

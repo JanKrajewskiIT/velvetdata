@@ -1,9 +1,8 @@
 import { SectionLabel } from '@jankrajewskiit/ui';
+import { createControllable, cx } from '@jankrajewskiit/ui/common';
 import { mergeProps, Show, untrack } from 'solid-js';
 
-import { createControllable } from '../../hooks/createControllable';
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import { QueryGroupEditor } from './QueryGroupEditor';
 import { clearQuery, describeQuery, emptyQuery, type QueryField, type QueryGroup } from './queryModel';
 

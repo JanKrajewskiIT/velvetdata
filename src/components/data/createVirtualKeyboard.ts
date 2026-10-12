@@ -1,10 +1,8 @@
+import { clamp, createFrameFocus, type RowKey } from '@jankrajewskiit/ui/common';
 import { createSignal, type JSX } from 'solid-js';
 
-import { createFrameFocus } from '../../hooks/createFrameFocus';
-import { clamp } from '../../utils/math';
 import type { VirtualKeys } from './createVirtualKeys';
 import type { VirtualRows } from './createVirtualRows';
-import type { RowKey } from './rowData';
 import type { VirtualListConfig } from './virtualListTypes';
 import { isRowControl } from './virtualRowTarget';
 

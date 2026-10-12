@@ -1,6 +1,6 @@
+import { cellText, compareValues, createControllable, type RowSort, rowValue } from '@jankrajewskiit/ui/common';
 import { type Accessor, createMemo, createSignal, untrack } from 'solid-js';
 
-import { createControllable } from '../../hooks/createControllable';
 import type { QueryGroup } from '../patterns/queryModel';
 import { applyColumns } from './applyColumns';
 import type { ColumnState } from './columnManagerTypes';
@@ -12,7 +12,6 @@ import { parseGridView, serializeGridView } from './gridViewCodec';
 import { defaultGridView } from './gridViewHelpers';
 import { gridColumnWidth, normalizeGridView } from './gridViewState';
 import type { GridViewState } from './gridViewTypes';
-import { cellText, compareValues, type RowSort, rowValue } from './rowData';
 import { sameGridView } from './sameGridView';
 
 export interface GridView<T extends object> {

@@ -1,6 +1,5 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
 import { type Accessor, createSignal } from 'solid-js';
-
-import type { RowKey } from './rowData';
 
 export interface GridExpansion {
   open: Accessor<ReadonlySet<RowKey>>;

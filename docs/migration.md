@@ -4,13 +4,19 @@
 
 Change these components' imports from `@jankrajewskiit/ui` to `@jankrajewskiit/data`. The same applies to their public types, `applyColumns`, `defaultGridView`, `reconcileGridView`, `parseGridView`, `serializeGridView`, `clearQuery`, `emptyQuery` and `describeQuery`. Import both packages' styles and compose `velvetDataMessages` with the existing provider. Migrate custom dictionary overrides from `velvet.data.{dataGrid,columnManager,virtualTable,virtualList}` and `velvet.patterns.queryBuilder` to `velvetData.{dataGrid,columnManager,virtualTable,virtualList,queryBuilder}`.
 
-VelvetUi's reference files remain a historical design-system reference. They still contain the original data specimens; their presence is not a public UI export. The new ownership applies to `src` and package entry points. VelvetDemo still uses its published UI dependency and needs a separate dependency/import migration before consuming these local package revisions together. Do not release a UI revision that removes the exports while its consumers still import them.
+VelvetUi's reference files remain a historical design-system reference. They still contain the original data specimens; their presence is not a public UI export. The new ownership applies to `src` and package entry points. VelvetDemo has migrated these imports and added the TradingView specimens against published Data 3.4.2.
+
+## Shared primitives
+
+Published UI 3.4.6 provides the public `@jankrajewskiit/ui/common` entry point. All seven duplicated helper modules still have UI consumers, including menus/pickers, editable tables, comment/label/event ids and controlled components. Their implementations stay in UI; Data's copies of `cx`, `id`, `math`, `columnWidth`, `createControllable`, `createFrameFocus` and `rowData` have been removed and all their consumers import the public API. `modifier`, `percentOf`, `sortRows` and `cssLength` remain private UI helpers because Data does not use them. No helper from this set is exclusive to Data.
+
+The shared `columnName` helper is also owned by UI and used by both table resize labels and Data's grid labels/CSV headers. The translation/fallback algorithm is shared through `createLibraryMessages`. The small package adapters supply their own dictionaries; Data owns `velvetDataMessages` and UI owns `velvetMessages`. Data requires UI `>=3.4.6 <4`. Refresh Data's dependency installation/lockfile against published UI 3.4.6 and run `npm run verify` before its next release. UI 3.4.4 has no `/common` export. Existing public Data row/translation types retain their names.
 
 ## Saved views and collections
 
 The moved grid retains one controlled/uncontrolled `GridViewState` for search, query, sort, column settings and widths. Its version-1 codec stores settings only, limits payload size/nesting/node counts and validates nested data before schema reconciliation. Server filtering/sorting and record persistence remain consumer-owned. Stable unique `rowKey` or `getRowId` values are necessary when records are replaced or reordered; positional fallback IDs cannot preserve identity across those operations. The current grid feature contracts were preserved; `ApplyColumns` is replaced by the canonical `applyColumns` name.
 
-`Table` and its add-row slot remain in Velvet UI. The earlier VelvetData `DataGridPro`, flat query rule API, `TableAddRowAction`, `en`/`pl` exports and UI dictionary augmentation are replaced by the current component contracts and `velvetDataMessages`. This is a breaking rewrite of the previous VelvetData API and a breaking ownership change for VelvetUi. Package versions have not been bumped or published.
+`Table` and its add-row slot remain in Velvet UI. The earlier VelvetData `DataGridPro`, flat query rule API, `TableAddRowAction`, `en`/`pl` exports and UI dictionary augmentation are replaced by the current component contracts and `velvetDataMessages`. This is a breaking rewrite of the previous VelvetData API and a breaking ownership change for VelvetUi. The migrated Data API has been published as 3.4.2; the new shared-primitives integration requires a subsequent Data release using UI 3.4.6.
 
 ## Previous TradingView implementation
 

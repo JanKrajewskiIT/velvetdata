@@ -1,8 +1,8 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
 import { createEffect, onCleanup, onMount } from 'solid-js';
 
 import type { DataGridController } from './dataGridController';
 import { GridRow } from './GridRow';
-import type { RowKey } from './rowData';
 
 export interface GridMeasuredRowProps<T extends object> {
   grid: DataGridController<T>;

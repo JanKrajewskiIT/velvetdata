@@ -1,12 +1,11 @@
 import { Glyph } from '@jankrajewskiit/ui';
+import { cellText, cx, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
 import { type JSX, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import type { DataGridController } from './dataGridController';
 import type { GridColumn } from './dataGridTypes';
 import { GridCellEditor } from './GridCellEditor';
-import { cellText, type RowKey, rowValue } from './rowData';
 
 export interface GridCellProps<T extends object> {
   grid: DataGridController<T>;

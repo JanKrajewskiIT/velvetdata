@@ -1,3 +1,5 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
+
 import type { GridActiveCell } from './createGridActiveCell';
 import type { GridExpansion } from './createGridExpansion';
 import type { GridLayout } from './createGridLayout';
@@ -6,7 +8,6 @@ import type { GridView } from './createGridView';
 import type { GridWindow } from './createGridWindow';
 import type { VirtualKeys } from './createVirtualKeys';
 import type { DataGridProps } from './dataGridTypes';
-import type { RowKey } from './rowData';
 
 /** Everything the DataGrid parts share: resolved props plus the state owned by the grid hooks. */
 export interface DataGridController<T extends object> {

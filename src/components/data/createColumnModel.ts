@@ -1,8 +1,7 @@
+import { clamp, createControllable } from '@jankrajewskiit/ui/common';
 import { type Accessor, createMemo, type JSX, untrack } from 'solid-js';
 
-import { createControllable } from '../../hooks/createControllable';
 import { useTranslate } from '../../i18n/useTranslate';
-import { clamp } from '../../utils/math';
 import { columnCapabilities } from './columnCapabilities';
 import type { ColumnPin, ColumnState, ManagedColumn } from './columnManagerTypes';
 import { initialManagedColumns, reconcileColumnState } from './columnState';

@@ -1,8 +1,8 @@
 import { Count, SectionLabel } from '@jankrajewskiit/ui';
+import { cx } from '@jankrajewskiit/ui/common';
 import { For, type JSX, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import type { ColumnManagerController } from './columnManagerController';
 import { ColumnManagerItem } from './ColumnManagerItem';
 import type { ColumnPin } from './columnManagerTypes';

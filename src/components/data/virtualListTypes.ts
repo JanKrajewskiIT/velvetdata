@@ -1,6 +1,5 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
 import type { JSX } from 'solid-js';
-
-import type { RowKey } from './rowData';
 
 export interface VirtualListItemState {
   selected: boolean;

@@ -1,8 +1,8 @@
 import { Button, IconButton } from '@jankrajewskiit/ui';
+import { cx } from '@jankrajewskiit/ui/common';
 import { createMemo, For, Match, Show, Switch } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import {
   combinatorLabel,
   isQueryGroup,

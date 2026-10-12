@@ -1,9 +1,9 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
 import type { JSX } from 'solid-js';
 
 import type { QueryField } from '../patterns/queryModel';
 import type { ColumnPin } from './columnManagerTypes';
 import type { GridViewState } from './gridViewTypes';
-import type { RowKey } from './rowData';
 
 export interface GridColumn<T extends object = object> {
   key: string;

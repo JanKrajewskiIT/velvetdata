@@ -1,6 +1,5 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
 import { type Accessor, createEffect, createMemo } from 'solid-js';
-
-import type { RowKey } from './rowData';
 
 export const createVirtualKeys = <T>(
   items: Accessor<readonly T[]>,

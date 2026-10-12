@@ -1,11 +1,9 @@
 import { ColumnResize, Glyph } from '@jankrajewskiit/ui';
+import { columnName, cx, nextSort } from '@jankrajewskiit/ui/common';
 import { createMemo, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import type { DataGridController } from './dataGridController';
-import { columnName } from './gridColumns';
-import { nextSort } from './rowData';
 
 export interface GridHeaderCellProps<T extends object> {
   grid: DataGridController<T>;

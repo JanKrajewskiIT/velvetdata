@@ -1,5 +1,3 @@
-import type { JSX } from 'solid-js';
-
 import type { ColumnState } from './columnManagerTypes';
 import type { GridColumn } from './dataGridTypes';
 
@@ -18,5 +16,3 @@ export const initialColumnState = <T extends object>(columns: GridColumn<T>[], s
     pin: c.pin ?? (!anyPinned && stickyFirst && i === 0 ? 'left' : null),
   }));
 };
-
-export const columnName = (c: { key: string; label: JSX.Element }) => (typeof c.label === 'string' ? c.label : c.key);

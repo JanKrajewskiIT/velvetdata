@@ -1,7 +1,5 @@
+import { createControllable, type RowKey } from '@jankrajewskiit/ui/common';
 import { type Accessor, createMemo } from 'solid-js';
-
-import { createControllable } from '../../hooks/createControllable';
-import type { RowKey } from './rowData';
 
 export interface GridSelectionOptions<T extends object> {
   selected: Accessor<RowKey[] | undefined>;

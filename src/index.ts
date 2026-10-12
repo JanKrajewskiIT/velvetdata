@@ -36,7 +36,6 @@ export { parseGridView, serializeGridView } from './components/data/gridViewCode
 export type { GridViewOptions } from './components/data/gridViewHelpers';
 export { defaultGridView, reconcileGridView } from './components/data/gridViewHelpers';
 export type { GridViewState } from './components/data/gridViewTypes';
-export type { RowKey, RowSort } from './components/data/rowData';
 export { VirtualList } from './components/data/VirtualList';
 export type { VirtualListItemState, VirtualListProps } from './components/data/virtualListTypes';
 export type { VirtualColumn, VirtualTableProps } from './components/data/VirtualTable';
@@ -61,3 +60,4 @@ export { useTradingViewPollingFeed } from './hooks/useTradingViewPollingFeed';
 export type { TradingViewSubscriptionOptions, TradingViewWsFeedOptions } from './hooks/useTradingViewWsFeed';
 export { useTradingViewWsFeed } from './hooks/useTradingViewWsFeed';
 export { velvetDataMessages } from './i18n';
+export type { RowKey, RowSort } from '@jankrajewskiit/ui/common';

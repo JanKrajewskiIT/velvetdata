@@ -1,6 +1,6 @@
+import { cx } from '@jankrajewskiit/ui/common';
 import { type Accessor, createMemo, type JSX } from 'solid-js';
 
-import { cx } from '../../utils/cx';
 import type { GridColumn } from './dataGridTypes';
 import { CHECK_WIDTH, DEFAULT_COLUMN_WIDTH, ROW_NUMBER_WIDTH } from './gridColumns';
 

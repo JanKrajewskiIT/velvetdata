@@ -1,8 +1,8 @@
 import { Button } from '@jankrajewskiit/ui';
+import { cx, rowId, type RowKey } from '@jankrajewskiit/ui/common';
 import { createEffect, createMemo, createSignal, type JSX, mergeProps, onCleanup, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import { createGridActiveCell } from './createGridActiveCell';
 import { createGridExpansion } from './createGridExpansion';
 import { createGridKeyboard } from './createGridKeyboard';
@@ -19,7 +19,6 @@ import { GridEmpty } from './GridEmpty';
 import { GridFooter } from './GridFooter';
 import { GridHeader } from './GridHeader';
 import { GridToolbar } from './GridToolbar';
-import { rowId, type RowKey } from './rowData';
 
 export type { DataGridProps, GridColumn, GridRowChange } from './dataGridTypes';
 export type { GridViewState } from './gridViewTypes';

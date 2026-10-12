@@ -1,7 +1,7 @@
 import { Handle, IconButton, Switch } from '@jankrajewskiit/ui';
+import { cx } from '@jankrajewskiit/ui/common';
 
 import { useTranslate } from '../../i18n/useTranslate';
-import { cx } from '../../utils/cx';
 import type { ColumnManagerController } from './columnManagerController';
 import type { ColumnPin, ColumnState } from './columnManagerTypes';
 

@@ -1,10 +1,10 @@
+import type { RowKey } from '@jankrajewskiit/ui/common';
 import { type Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 
 import type { GridExpansion } from './createGridExpansion';
 import type { VirtualKeys } from './createVirtualKeys';
 import type { CellPosition, DataGridProps } from './dataGridTypes';
 import { DEFAULT_GRID_HEIGHT, DEFAULT_GRID_OVERSCAN, ESTIMATED_GRID_ROW_HEIGHT } from './gridColumns';
-import type { RowKey } from './rowData';
 import { nonnegativeInteger, positiveSize } from './virtualDimensions';
 
 interface GridWindowOptions<T extends object> {
