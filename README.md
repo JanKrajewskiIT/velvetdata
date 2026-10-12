@@ -97,7 +97,7 @@ Use Node 26, as in VelvetUi; `.nvmrc`, `.node-version`, package engines and CI a
 
 The `typescript` dependency aliases `@typescript/typescript6` for tools importing the TypeScript JavaScript API, including typed ESLint and declaration generation. `@typescript/native` aliases TypeScript 7 for the compiler. The packages provide distinct binaries: `tsc6` for TypeScript 6 and `tsc` for TypeScript 7. Build and typecheck use `tsc`, matching VelvetUi. Preserve both npm aliases when updating dependencies so the config preset's TypeScript 6 peer remains compatible.
 
-CI selects Node through `.nvmrc`. Its local verification workflow retains VelvetData's `npm audit --audit-level=moderate` gate; registry credentials are scoped to npm steps. Publishing targets GitHub Packages and checks the release tag against the package version.
+CI selects Node through `.nvmrc`. Its local verification workflow temporarily uses `npm audit --audit-level=critical`, matching VelvetUi, following acceptance of [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) in the development dependency `braces`. This threshold reports moderate and high findings without blocking CI; critical findings still block it. Restore `--audit-level=moderate` when a patched version is available. Registry credentials are scoped to npm steps. Publishing targets GitHub Packages and checks the release tag against the package version.
 
 ## Migration and verification
 
