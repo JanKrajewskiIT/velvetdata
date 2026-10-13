@@ -1,42 +1,23 @@
 name: Verify
-
 on:
   workflow_call:
     secrets:
       GHCR_TOKEN:
         required: false
-
+      NPM_READ_TOKEN:
+        required: false
+      CONFIGS_READ_TOKEN:
+        required: false
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    uses: JanKrajewskiIT/velvetconfigs/.github/workflows/verify-package.yml@9d7851722b143c4d8aaf7ca0f2058f5ae149fe44 # v3.5.3
+    with:
+      package-artifact: velvet-package
     permissions:
       contents: read
       packages: read
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          registry-url: https://npm.pkg.github.com
-          scope: '@jankrajewskiit'
-          cache: 'npm'
-
-      - name: Install dependencies
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
-        run: npm ci
-
-      - name: Audit dependencies
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
-        # Temporary acceptance of GHSA-vfj7-8cjw-p6xm (braces, no fix); restore moderate when a patched version is available.
-        run: npm audit --audit-level=critical
-
-      - name: Verify package
-        env:
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN || github.token }}
-        run: npm run verify
+    secrets:
+      NPM_READ_TOKEN: ${{ secrets.NPM_READ_TOKEN || secrets.GHCR_TOKEN }}
+      CONFIGS_READ_TOKEN: ${{ secrets.CONFIGS_READ_TOKEN }}
+permissions:
+  contents: read

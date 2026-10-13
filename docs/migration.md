@@ -4,7 +4,7 @@
 
 Change these components' imports from `@jankrajewskiit/ui` to `@jankrajewskiit/data`. The same applies to their public types, `applyColumns`, `defaultGridView`, `reconcileGridView`, `parseGridView`, `serializeGridView`, `clearQuery`, `emptyQuery` and `describeQuery`. Import both packages' styles and compose `velvetDataMessages` with the existing provider. Migrate custom dictionary overrides from `velvet.data.{dataGrid,columnManager,virtualTable,virtualList}` and `velvet.patterns.queryBuilder` to `velvetData.{dataGrid,columnManager,virtualTable,virtualList,queryBuilder}`.
 
-VelvetUi's reference files remain a historical design-system reference. They still contain the original data specimens; their presence is not a public UI export. The new ownership applies to `src` and package entry points. VelvetDemo has migrated these imports and added the TradingView specimens. UI and Data 3.4.6 are installed in the showcase; its manifest now targets the prepared 3.4.7 releases.
+VelvetUi's reference files remain a historical design-system reference. They still contain the original data specimens; their presence is not a public UI export. The new ownership applies to `src` and package entry points. VelvetDemo has migrated these imports and added the TradingView specimens. Installed and locked dependencies were confirmed as UI/Data 3.4.8 and I18n 3.4.3 on 2026-10-12.
 
 ## Shared primitives
 
@@ -28,14 +28,14 @@ The implemented scope includes candles, volume, configurable SMA/EMA periods, co
 
 ## Release order
 
-The prepared release graph is I18n 3.4.2 → UI 3.4.7 → Data 3.4.7 → VelvetDemo. Validate each package before publishing it; no publishing or tagging is performed by these source changes.
+The release graph is I18n → UI → Data → VelvetDemo. The formatter API requires I18n 3.4.2 or newer; Data's minimum UI version is 3.4.7. The user has published the correction as I18n 3.4.3 and UI/Data 3.4.8. Validate each package before publishing later updates.
 
-1. In VelvetI18n, run `npm run verify` and publish 3.4.2 after it passes.
-2. In VelvetUi, run `npm install --ignore-scripts --no-audit --no-fund`, then `npm run verify`, before publishing 3.4.7.
-3. In VelvetData, run the same install and verification commands before publishing 3.4.7.
+1. In VelvetI18n, run `npm run verify` and publish the new version after it passes.
+2. In VelvetUi, run `npm install --ignore-scripts --no-audit --no-fund`, then `npm run verify`, before publishing the new version.
+3. In VelvetData, run the same install and verification commands before publishing the new version.
 4. In VelvetDemo, run the same install and verification commands against the published releases, then check the interactions described below.
 
-Root lockfile metadata follows the prepared manifests, while resolved dependency entries remain at the installed versions until the package manager refreshes them. Do not edit resolved URLs or integrity hashes manually, and do not use `npm ci` with those unresolved release requirements.
+Refresh lockfiles through the package manager after updating dependency requirements. Do not edit resolved URLs or integrity hashes manually. The current resolved entries match the installed correction releases.
 
 ## Required checks
 
@@ -45,4 +45,4 @@ From VelvetData: `npm install --ignore-scripts --no-audit --no-fund`, then `npm 
 
 From VelvetUi: `npm run verify` checks the remaining component exports, dictionary shapes and both public entry points.
 
-An authorized UI aggregate verification passed after the shared entry point was added. The user has installed the published 3.4.6 packages. The current 3.4.7 correction has not yet been verified against its new upstream releases. Before release, check keyboard editing/selection/focus in virtual collections, saved-view import/export, English/Polish fallback with and without Data dictionaries, engine teardown and theme changes, polling completion after symbol/interval switches, old subscription errors after disposal and replacement of a candle with the same timestamp. No tests were changed as part of this migration.
+An authorized UI aggregate verification passed after the shared entry point was added. The user has since published and installed the correction releases. Read-only inspection confirmed their dependency versions and public formatter exports; the agent has not rerun aggregate verification against that installation. Check keyboard editing/selection/focus in virtual collections, saved-view import/export, English/Polish fallback with and without Data dictionaries, engine teardown and theme changes, polling completion after symbol/interval switches, old subscription errors after disposal and replacement of a candle with the same timestamp. No tests were changed as part of this migration.

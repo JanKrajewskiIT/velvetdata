@@ -1,0 +1,67 @@
+version: 2
+registries:
+  velvetconfigs:
+    type: git
+    url: https://github.com
+    username: x-access-token
+    password: ${{secrets.DEPENDABOT_GIT_TOKEN}}
+  github-npm:
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    scope: '@jankrajewskiit'
+    token: ${{secrets.NPM_READ_TOKEN}}
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore
+      include: scope
+    registries:
+      - github-npm
+    groups:
+      eslint:
+        patterns:
+          - '@eslint/*'
+          - eslint
+          - eslint-*
+          - typescript-eslint
+      stylelint:
+        patterns:
+          - stylelint
+          - stylelint-*
+      typescript:
+        patterns:
+          - typescript
+          - '@typescript/*'
+          - '@types/node'
+      vite:
+        patterns:
+          - vite
+          - vite-*
+      velvet:
+        patterns:
+          - '@jankrajewskiit/*'
+      tooling:
+        patterns:
+          - prettier
+          - prettier-*
+          - husky
+          - lint-staged
+          - publint
+          - '@arethetypeswrong/*'
+          - size-limit
+          - '@size-limit/*'
+      solid:
+        patterns:
+          - solid-js
+          - '@solidjs/*'
+          - solid-*
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    registries:
+      - velvetconfigs

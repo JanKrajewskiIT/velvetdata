@@ -3,3 +3,7 @@ dist/
 package-lock.json
 src/styles/styles.css
 src/styles/components/
+
+.artifacts/
+
+.deployment/

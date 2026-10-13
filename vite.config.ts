@@ -7,12 +7,12 @@ export default defineConfig(async () =>
       build: {
         lib: {
           entry: { index: 'src/index.ts', tradingview: 'src/tradingview.ts' },
+          cssFileName: 'velvet-data',
         },
       },
     },
     {
       fileName: 'velvet-data',
-      externalizeFromPackageJson: true,
       dts: { tsconfigPath: './tsconfig.app.json' },
     },
   ),

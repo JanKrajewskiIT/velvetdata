@@ -13,3 +13,5 @@ dist-ssr/
 /.github/skills/
 /.github/instructions/
 /.vscode/settings.json
+.artifacts/
+.deployment/

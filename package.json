@@ -1,6 +1,6 @@
 {
   "name": "@jankrajewskiit/data",
-  "version": "3.4.8",
+  "version": "3.4.9",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -9,19 +9,19 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
     },
     "./tradingview": {
-      "types": "./dist/tradingview.d.ts",
-      "import": "./dist/tradingview.js"
+      "types": "./dist/tradingview.d.mts",
+      "import": "./dist/tradingview.mjs"
     },
     "./styles": {
       "types": "./styles.d.ts",
       "default": "./dist/velvet-data.css"
     }
   },
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "sideEffects": [
     "**/*.css"
   ],
@@ -34,29 +34,34 @@
     "dist/**/*",
     "styles.d.ts"
   ],
-  "engines": {
-    "node": ">=26"
-  },
   "scripts": {
     "prepublishOnly": "npm run verify",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint:css": "stylelint \"src/**/*.css\"",
-    "lint:css:fix": "stylelint \"src/**/*.css\" --fix",
-    "verify": "npm run format:check && npm run lint && npm run lint:css && npm run build && npm run verify:pkg",
-    "verify:pkg": "publint --strict && attw --pack . --entrypoints . ./tradingview --profile esm-only --ignore-rules internal-resolution-error",
+    "lint:css": "stylelint \"src/**/*.css\" --max-warnings 0",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix --max-warnings 0",
+    "verify": "npm run toolchain && npm run editor:check && npm run format:check && npm run lint && npm run lint:css && npm run build && npm run verify:pkg && npm run size",
+    "verify:pkg": "npm run verify:types && publint --strict && attw --pack . --entrypoints . ./tradingview --profile esm-only",
     "size": "size-limit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "toolchain": "configs-toolchain",
+    "audit:deps": "configs-audit",
+    "prebuild": "npm run toolchain",
+    "verify:types": "tsc -p tsconfig.declarations.json",
+    "editor:sync": "configs-editor --write",
+    "editor:check": "configs-editor",
+    "deps:check": "knip --no-exit-code --reporter json",
+    "deps:strict": "knip"
   },
   "peerDependencies": {
-    "@jankrajewskiit/ui": ">=3.4.7 <4",
+    "@jankrajewskiit/i18n": ">=3.4.4 <4",
+    "@jankrajewskiit/ui": ">=3.4.9 <4",
     "lightweight-charts": ">=5.1.0 <6",
-    "solid-js": ">=1.9.0 <2",
-    "@jankrajewskiit/i18n": "^3.4.2"
+    "solid-js": ">=1.9.0 <2"
   },
   "peerDependenciesMeta": {
     "lightweight-charts": {
@@ -65,14 +70,15 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@jankrajewskiit/configs": "^3.4.2",
-    "@jankrajewskiit/i18n": "^3.4.3",
-    "@jankrajewskiit/ui": "^3.4.8",
+    "@jankrajewskiit/configs": "^3.5.3",
+    "@jankrajewskiit/i18n": "^3.5.3",
+    "@jankrajewskiit/ui": "^3.5.4",
     "@size-limit/file": "^14.2.0",
     "@types/node": "^26.6.5",
     "@typescript/native": "npm:typescript@^7.0.2",
     "eslint": "^10.12.0",
     "husky": "^9.1.7",
+    "knip": "^6.41.0",
     "lightweight-charts": "^5.2.1",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
@@ -81,19 +87,22 @@
     "solid-js": "^1.9.17",
     "stylelint": "^17.16.0",
     "stylelint-config-standard": "^40.0.0",
-    "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "vite": "^8.3.4",
-    "vite-plugin-dts": "^5.1.2"
+    "typescript": "npm:@typescript/typescript6@~6.0.2",
+    "vite": "^8.3.4"
   },
   "size-limit": [
     {
-      "path": "dist/index.js",
-      "limit": "100 kB"
+      "path": "dist/**/*.mjs",
+      "limit": "100 kB",
+      "name": "Published JavaScript (all modules)"
     },
     {
       "path": "dist/velvet-data.css",
       "limit": "50 kB"
     }
   ],
-  "description": "Advanced SolidJS data components composed from Velvet UI."
+  "description": "Advanced SolidJS data components composed from Velvet UI.",
+  "overrides": {
+    "eslint": "$eslint"
+  }
 }

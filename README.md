@@ -44,9 +44,9 @@ await mountVelvetApp({
 
 Compose `velvetDataMessages` into the existing Velvet provider. Missing messages fall back to bundled English. Share one instance of `solid-js` and `@jankrajewskiit/i18n` with Velvet UI. The package's messages use the `velvetData` namespace.
 
-VelvetData 3.4.7 requires Velvet UI `>=3.4.7 <4` and I18n `^3.4.2`. Its shared class, state, focus, id, width and row helpers import from `@jankrajewskiit/ui/common`; local copies have been removed. The `RowKey`, `RowSort` and `StaticTranslate` exports remain compatible through the shared types. Translation fallback uses UI's dictionary-neutral `createLibraryMessages` factory with the composed English UI/Data dictionary. Missing provider messages retain interpolation, plural rules and rich-text handlers through the shared I18n formatters.
+VelvetData requires Velvet UI `>=3.4.7 <4` and I18n `^3.4.2`. Its shared class, state, focus, id, width and row helpers import from `@jankrajewskiit/ui/common`; local copies have been removed. The `RowKey`, `RowSort` and `StaticTranslate` exports remain compatible through the shared types. Translation fallback uses UI's dictionary-neutral `createLibraryMessages` factory with the composed English UI/Data dictionary. Missing provider messages retain interpolation, plural rules and rich-text handlers through the shared I18n formatters.
 
-UI and Data 3.4.6 are already published. The prepared 3.4.7 revision requires I18n 3.4.2, then UI 3.4.7, before its dependencies can be refreshed and checked. Follow the [release order](docs/migration.md#release-order); resolved lockfile entries still describe the installed releases until the package manager updates them.
+Follow the [release order](docs/migration.md#release-order) when updating the shared packages. Dependency installation and resolved lockfile entries were confirmed against I18n 3.4.3 and UI/Data 3.4.8 on 2026-10-12; aggregate verification and browser interaction results must be recorded separately.
 
 ## Trading chart
 
@@ -101,10 +101,30 @@ Use Node 26, as in VelvetUi; `.nvmrc`, `.node-version`, package engines and CI a
 
 The `typescript` dependency aliases `@typescript/typescript6` for tools importing the TypeScript JavaScript API, including typed ESLint and declaration generation. `@typescript/native` aliases TypeScript 7 for the compiler. The packages provide distinct binaries: `tsc6` for TypeScript 6 and `tsc` for TypeScript 7. Build and typecheck use `tsc`, matching VelvetUi. Preserve both npm aliases when updating dependencies so the config preset's TypeScript 6 peer remains compatible.
 
-CI selects Node through `.nvmrc`. Its local verification workflow temporarily uses `npm audit --audit-level=critical`, matching VelvetUi, following acceptance of [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) in the development dependency `braces`. This threshold reports moderate and high findings without blocking CI; critical findings still block it. Restore `--audit-level=moderate` when a patched version is available. Registry credentials are scoped to npm steps. Publishing targets GitHub Packages and checks the release tag against the package version.
+CI selects Node through `.nvmrc` and npm through `packageManager`. High/critical dependency advisories block verification except for the exact, expiring shared braces exception. Credentials are scoped to npm steps, and publishing targets GitHub Packages.
 
 ## Migration and verification
 
-See [migration notes](docs/migration.md) for the breaking import/API changes and the previous chart capability inventory. This source migration has not been built, linted or checked in a packed consumer. Keyboard/focus, hydration, provider fallback, theme changes, chart disposal and asynchronous race behavior require runtime verification. No interaction tests were added.
+See [migration notes](docs/migration.md) for the breaking import/API changes and the previous chart capability inventory. The tooling gate checks formatting, lint, build, declarations and packed exports; a clean installation against the new package versions remains part of release verification. Keyboard/focus, hydration, provider fallback, theme changes, chart disposal and asynchronous race behavior require runtime verification. No interaction tests were added.
 
 Run `npm install` to create the lockfile and initialize Husky, then `npm run verify` for formatting, ESLint, Stylelint, build and packed export checks. `npm run size` checks the bundle budgets after building. A new lockfile must be created before CI's `npm ci` step can run.
+
+## Tooling gates
+
+Configs 3.5 owns Vite plugins, staged-file chunking and the Velvet Stylelint naming preset. The consumer keeps its runtimes and stylesheet exclusions. The root ESLint override selects ESLint 10 for accessibility-plugin peers; the preset also adapts legacy rule APIs. `verify` runs formatting, ESLint, Stylelint, the build, package validation and size limits. The JavaScript budget covers all published `dist/**/*.mjs` modules compressed individually with Brotli (100 kB); it measures package output, not a tree-shaken application bundle or external peer dependencies.
+
+## Shared configuration
+
+Use Node 26 and the exact npm version from `packageManager`. Open `frontend.code-workspace` for TypeScript 7 and the shared formatter/linter setup. `verify` checks editor drift and enforces zero lint warnings. `audit:deps` is a separate networked dependency audit used by CI.
+
+Published declarations are checked with `NodeNext` and `skipLibCheck: false`; package checks no longer ignore internal resolution errors. Vite libraries publish `.mjs` and `.d.mts`, while Reactive retains its valid TypeScript `NodeNext` `.js`/`.d.ts` output. Public package import paths stay the same.
+
+See the [Configs release migration](https://github.com/JanKrajewskiIT/velvetconfigs/blob/v3.5.0/README.md#release-migration) for publication order, artifact-based workflows, the audit exception deadline and registry secrets. Refresh lockfiles and run `npm run verify` against the refreshed installation before publication.
+
+## Security pipeline
+
+Source verification includes Gitleaks, Semgrep, actionlint, zizmor and Trivy configuration scanning. npm audit blocks high/critical advisories under the shared expiring-exception policy. Verification produces a CycloneDX dependency SBOM. Weekly/manual security workflows re-check dependency databases and source history without building the application.
+
+Knip is available through `npm run deps:check` (JSON report) and `npm run deps:strict` (blocking unused-code check). CI records the report while the initial findings are reviewed; security scans remain blocking. Public library entry exports are preserved.
+
+Configure `CONFIGS_READ_TOKEN` for private Configs source access alongside the existing npm read token. See [shared security controls](https://github.com/JanKrajewskiIT/velvetconfigs/blob/v3.5.0/security/README.md) for required GitHub settings, reports, image signing, staging variables, WAF activation and manual acceptance checks.
