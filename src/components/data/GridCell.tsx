@@ -1,4 +1,4 @@
-import { Glyph } from '@jankrajewskiit/ui';
+import { Glyph } from '@jankrajewskiit/ui/bare';
 import { cellText, cx, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
 import { type JSX, Show } from 'solid-js';
 
@@ -31,19 +31,20 @@ export const GridCell = <T extends object>(props: GridCellProps<T>) => {
     props.grid.active.cell().row === props.rowIndex && props.grid.active.cell().col === props.colIndex;
   const editing = () =>
     props.grid.active.edit()?.row === props.rowIndex && props.grid.active.edit()?.col === props.colIndex;
+  const editable = () => props.grid.active.canEdit(props.colIndex);
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- gridcell keyboard handling lives on the grid owner (onKeyDown)
     <div
       role="gridcell"
       data-rc={`${props.rowIndex}-${props.colIndex}`}
       tabIndex={active() && !editing() ? 0 : -1}
-      aria-readonly={!props.column.editable || undefined}
+      aria-readonly={!editable() || undefined}
       class={cx(
         'vui-grid__cell',
         active() && 'vui-grid__cell--on',
         editing() && 'vui-grid__cell--edit',
         props.column.type === 'number' && 'vui-grid__num',
-        props.column.editable && 'vui-grid__cell--editable',
+        editable() && 'vui-grid__cell--editable',
         props.grid.layout.pinClass(props.column),
       )}
       style={props.grid.layout.pinStyle(props.column)}
@@ -73,7 +74,13 @@ export const GridCell = <T extends object>(props: GridCellProps<T>) => {
           </span>
         }
       >
-        <GridCellEditor grid={props.grid} column={props.column} rowIndex={props.rowIndex} colIndex={props.colIndex} />
+        <GridCellEditor
+          grid={props.grid}
+          column={props.column}
+          row={props.row}
+          rowIndex={props.rowIndex}
+          colIndex={props.colIndex}
+        />
       </Show>
     </div>
   );

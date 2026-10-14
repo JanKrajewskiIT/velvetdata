@@ -1,4 +1,4 @@
-import { Button, Count, Popover, SearchInput } from '@jankrajewskiit/ui';
+import { Button, Count, Popover, SearchInput } from '@jankrajewskiit/ui/bare';
 import { Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
@@ -42,13 +42,13 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
     !props.grid.view.isDefault() ||
     props.grid.config.onExport !== undefined ||
     !!props.grid.config.toolbarEnd ||
-    (props.grid.config.selectable && !!props.grid.config.bulkActions);
+    (props.grid.config.selectable && (!!props.grid.config.bulkActions || !!props.grid.config.bulkSelectionActions));
 
   return (
     <Show when={hasToolbar()}>
       <div class="vui-dgrid__bar">
         <Show
-          when={props.grid.config.selectable && props.grid.selection.selectedRows().length > 0}
+          when={props.grid.config.selectable && props.grid.selection.selectedKeys().length > 0}
           fallback={
             <Show when={props.grid.config.searchable}>
               <SearchInput
@@ -67,12 +67,16 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
         >
           <div class="vui-dgrid__bulk">
             <span class="vui-dgrid__bulk-n">
-              <GridSelectedCount count={props.grid.selection.selectedRows().length} />
+              <GridSelectedCount count={props.grid.selection.selectedKeys().length} />
             </span>
             <Button size="sm" variant="ghost" onClick={props.grid.selection.clear}>
               {translate('velvet.common.clear')}
             </Button>
             {props.grid.config.bulkActions?.(props.grid.selection.selectedRows())}
+            {props.grid.config.bulkSelectionActions?.({
+              keys: props.grid.selection.selectedKeys(),
+              loadedRows: props.grid.selection.selectedRows(),
+            })}
           </div>
         </Show>
         <div class="vui-dgrid__tools">

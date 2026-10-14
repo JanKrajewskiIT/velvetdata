@@ -58,7 +58,7 @@ export interface TradingChartEngineOptions {
 
 export type TradingChartEngineFactory = (options: TradingChartEngineOptions) => TradingChartEngine;
 
-export const TRADING_FEED_STATUSES = ['idle', 'pending', 'live', 'error'] as const;
+export const TRADING_FEED_STATUSES = ['idle', 'pending', 'live', 'error', 'reconnecting'] as const;
 export type TradingFeedStatus = (typeof TRADING_FEED_STATUSES)[number];
 
 export interface TradingViewChartProps extends Omit<
@@ -81,6 +81,7 @@ export interface TradingViewChartProps extends Omit<
   readonly onVolumeChange?: (volume: boolean) => void;
   readonly levels?: readonly TradingPriceLevel[];
   readonly status?: TradingFeedStatus;
+  readonly stale?: boolean;
   readonly onRetry?: () => void;
   readonly onError?: (error: Error) => void;
 }

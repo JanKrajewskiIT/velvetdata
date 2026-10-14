@@ -1,7 +1,8 @@
 import type { RowSort } from '@jankrajewskiit/ui/common';
 
-import type { QueryGroup, QueryNode } from '../patterns/queryModel';
+import type { QueryField, QueryGroup, QueryNode } from '../patterns/queryModel';
 import { QUERY_OPERATOR_VALUES } from '../patterns/queryModel';
+import { validateQuery } from '../patterns/queryValidation';
 import type { ColumnState } from './columnManagerTypes';
 import type { GridViewState } from './gridViewTypes';
 
@@ -50,7 +51,7 @@ export const serializeGridView = (view: GridViewState): string => {
 };
 
 /** Validates the complete payload before callers reconcile it against their current columns and fields. */
-export const parseGridView = (json: string): GridViewState => {
+export const parseGridView = (json: string, fields?: readonly QueryField[]): GridViewState => {
   if (json.length > MAX_GRID_VIEW_BYTES || new TextEncoder().encode(json).byteLength > MAX_GRID_VIEW_BYTES)
     return invalidView();
   const envelope = recordOf(JSON.parse(json) as unknown);
@@ -80,9 +81,12 @@ export const parseGridView = (json: string): GridViewState => {
       return [key, width];
     }),
   );
+  const query = view.query === undefined ? undefined : parseQuery(view.query);
+  if (query && fields && validateQuery(query, fields).some((issue) => issue.reason === 'invalid-value'))
+    return invalidView();
   return {
     search: textOf(view.search),
-    query: view.query === undefined ? undefined : parseQuery(view.query),
+    query,
     columns,
     sort,
     widths,

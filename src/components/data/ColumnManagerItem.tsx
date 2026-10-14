@@ -1,4 +1,4 @@
-import { Handle, IconButton, Switch } from '@jankrajewskiit/ui';
+import { Handle, IconButton, Switch } from '@jankrajewskiit/ui/bare';
 import { cx } from '@jankrajewskiit/ui/common';
 
 import { useTranslate } from '../../i18n/useTranslate';

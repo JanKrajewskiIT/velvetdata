@@ -23,7 +23,14 @@ export const dataPl: TranslationOf<typeof dataEn> = {
       empty: 'Brak danych cenowych',
       error: 'Nie udało się wyświetlić wykresu. Sprawdź dane lub spróbuj ponownie.',
       retry: 'Spróbuj ponownie',
-      status: { idle: 'Bezczynny', pending: 'Łączenie…', live: 'Na żywo', error: 'Błąd połączenia' },
+      stale: 'Dane mogą być nieaktualne',
+      status: {
+        idle: 'Bezczynny',
+        pending: 'Łączenie…',
+        live: 'Na żywo',
+        error: 'Błąd wykresu lub połączenia',
+        reconnecting: 'Ponowne łączenie…',
+      },
     },
     columnManager: {
       title: 'Kolumny',
@@ -57,6 +64,10 @@ export const dataPl: TranslationOf<typeof dataEn> = {
       nothingPinned: 'Nic nie przypięto',
     },
     dataGrid: {
+      loading: 'Ładowanie rekordów…',
+      retry: 'Spróbuj ponownie',
+      invalidNumber: 'Wpisz poprawną liczbę.',
+      saveError: 'Nie udało się zapisać zmiany. Spróbuj ponownie.',
       label: 'Siatka danych',
       viewSettings: 'Ustawienia widoku',
       resetView: 'Przywróć widok',
@@ -87,10 +98,13 @@ export const dataPl: TranslationOf<typeof dataEn> = {
       rendering: 'Renderowane wiersze: {count} · zakres {range}',
     },
     virtualList: {
+      label: 'Lista rekordów',
+      loadError: 'Nie udało się wczytać kolejnych rekordów. Spróbuj ponownie.',
       loadingLabel: 'Wczytywanie kolejnych…',
       empty: 'Brak elementów do wyświetlenia',
     },
     queryBuilder: {
+      invalidValue: 'Wpisz poprawną wartość warunku.',
       empty: 'Brak warunków — pasuje każdy rekord.',
       allRecords: 'Wszystkie rekordy',
       clearRules: 'Wyczyść warunki',

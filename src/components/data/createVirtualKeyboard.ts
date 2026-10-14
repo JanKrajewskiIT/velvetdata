@@ -1,5 +1,5 @@
-import { clamp, createFrameFocus, type RowKey } from '@jankrajewskiit/ui/common';
-import { createSignal, type JSX } from 'solid-js';
+import { clamp, createFrameFocus, createTypeahead, type RowKey } from '@jankrajewskiit/ui/common';
+import { createEffect, createSignal, type JSX, on } from 'solid-js';
 
 import type { VirtualKeys } from './createVirtualKeys';
 import type { VirtualRows } from './createVirtualRows';
@@ -10,24 +10,32 @@ export const createVirtualKeyboard = <T>(
   p: VirtualListConfig<T>,
   rows: Pick<VirtualRows, 'count' | 'gap' | 'offsetAt' | 'first' | 'last'>,
   select: (index: number, item: T) => void,
-  box: () => HTMLDivElement,
+  box: () => HTMLDivElement | undefined,
   keys: VirtualKeys,
 ) => {
   const [focusedKey, setFocusedKey] = createSignal<RowKey>();
+  createEffect(
+    on(
+      () => p.dataKey,
+      () => setFocusedKey(undefined),
+      { defer: true },
+    ),
+  );
   const focus = () => {
     const key = focusedKey();
     return key === undefined ? -1 : keys.indexOf(key);
   };
   const setFocus = (index: number) => setFocusedKey(keys.keys()[index]);
   const focusFrame = createFrameFocus(box);
+  const typeahead = createTypeahead();
 
   const goTo = (index: number) => {
-    if (!rows.count()) return;
+    const el = box();
+    if (!rows.count() || !el) return;
     const target = clamp(index, 0, rows.count() - 1);
     setFocus(target);
     const top = rows.offsetAt(target);
     const bottom = rows.offsetAt(target + 1) - rows.gap();
-    const el = box();
     if (top < el.scrollTop) el.scrollTop = top;
     else if (bottom > el.scrollTop + el.clientHeight) el.scrollTop = bottom - el.clientHeight;
     focusFrame('[data-vi][tabindex="0"]');
@@ -53,6 +61,19 @@ export const createVirtualKeyboard = <T>(
       e.preventDefault();
       select(current, item);
       if (e.key === 'Enter') p.onActivate?.(item, current);
+    } else if (p.selectable && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && !e.isComposing) {
+      const target = typeahead(
+        e.key,
+        p.items.map(
+          (entry) =>
+            p.textValue?.(entry) ?? (typeof entry === 'string' || typeof entry === 'number' ? String(entry) : ''),
+        ),
+        current,
+      );
+      if (target >= 0) {
+        e.preventDefault();
+        goTo(target);
+      }
     }
   };
 

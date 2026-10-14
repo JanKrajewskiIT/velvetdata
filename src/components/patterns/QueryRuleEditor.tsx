@@ -1,8 +1,9 @@
-import { CloseButton, Input, Select } from '@jankrajewskiit/ui';
+import { CloseButton, Input, Select } from '@jankrajewskiit/ui/bare';
 import { Match, Switch } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import { operatorsFor, type QueryField, type QueryRule, VALUELESS_OPS, withField } from './queryModel';
+import { queryRuleIssue } from './queryValidation';
 
 export interface QueryRuleEditorProps {
   rule: QueryRule;
@@ -57,6 +58,9 @@ export const QueryRuleEditor = (props: QueryRuleEditorProps) => {
               aria-label={translate('velvetData.queryBuilder.value')}
               placeholder={translate('velvetData.queryBuilder.choose')}
               value={props.rule.value}
+              error={
+                queryRuleIssue(props.rule, props.fields) ? translate('velvetData.queryBuilder.invalidValue') : undefined
+              }
               options={field()?.options ?? []}
               onValueChange={(value) => props.onChange({ ...props.rule, value })}
             />
@@ -69,6 +73,9 @@ export const QueryRuleEditor = (props: QueryRuleEditorProps) => {
               disabled={props.disabled}
               aria-label={translate('velvetData.queryBuilder.value')}
               type={inputType()}
+              error={
+                queryRuleIssue(props.rule, props.fields) ? translate('velvetData.queryBuilder.invalidValue') : undefined
+              }
               placeholder={field()?.placeholder ?? translate('velvetData.queryBuilder.value')}
               value={props.rule.value}
               onInput={(e) => props.onChange({ ...props.rule, value: e.currentTarget.value })}

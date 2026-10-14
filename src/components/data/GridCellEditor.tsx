@@ -1,77 +1,65 @@
-import { For, Show } from 'solid-js';
+import { createUniqueId, Show } from 'solid-js';
 
 import type { DataGridController } from './dataGridController';
 import type { GridColumn } from './dataGridTypes';
+import type { GridEditorContext } from './gridEditorTypes';
+import { GridNativeEditor } from './GridNativeEditor';
 
 export interface GridCellEditorProps<T extends object> {
   grid: DataGridController<T>;
   column: GridColumn<T>;
+  row: T;
   rowIndex: number;
   colIndex: number;
 }
 
-const focusOnMount = (el: HTMLElement) =>
-  queueMicrotask(() => {
-    if (el.isConnected) el.focus({ preventScroll: true });
-  });
-
-/** In-cell editor: a select when the column has `options`, otherwise a text input. */
-export const GridCellEditor = <T extends object>(props: GridCellEditorProps<T>) => (
-  <Show
-    when={props.column.options}
-    fallback={
-      <input
-        ref={focusOnMount}
-        class="vui-grid__input"
-        value={props.grid.active.draft()}
-        inputMode={props.column.type === 'number' ? 'decimal' : undefined}
-        onInput={(e) => props.grid.active.setDraft(e.currentTarget.value)}
-        aria-label={typeof props.column.label === 'string' ? props.column.label : props.column.key}
-        onBlur={props.grid.active.commitOnBlur}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            props.grid.active.commit('down');
-          } else if (e.key === 'Tab') {
-            e.preventDefault();
-            props.grid.active.commit(e.shiftKey ? 'left' : 'right');
-          } else if (e.key === 'Escape') {
-            e.preventDefault();
-            props.grid.active.cancelEdit(props.rowIndex, props.colIndex);
-          }
-        }}
-      />
-    }
-  >
-    {(options) => (
-      <select
-        ref={focusOnMount}
-        class="vui-grid__input"
-        value={props.grid.active.draft()}
-        onChange={(e) => props.grid.active.setDraft(e.currentTarget.value)}
-        aria-label={typeof props.column.label === 'string' ? props.column.label : props.column.key}
-        onBlur={props.grid.active.commitOnBlur}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            props.grid.active.commit('down');
-          } else if (e.key === 'Tab') {
-            e.preventDefault();
-            props.grid.active.commit(e.shiftKey ? 'left' : 'right');
-          } else if (e.key === 'Escape') {
-            e.preventDefault();
-            props.grid.active.cancelEdit(props.rowIndex, props.colIndex);
-          }
-        }}
+export const GridCellEditor = <T extends object>(props: GridCellEditorProps<T>) => {
+  const errorId = createUniqueId();
+  const context: GridEditorContext<T> = {
+    get row() {
+      return props.row;
+    },
+    get columnKey() {
+      return props.column.key;
+    },
+    get draft() {
+      return props.grid.active.draft();
+    },
+    get pending() {
+      return props.grid.active.pending();
+    },
+    get error() {
+      return props.grid.active.error();
+    },
+    errorId,
+    setDraft: (value) => props.grid.active.setDraft(value),
+    commit: (move) => props.grid.active.commit(move),
+    cancel: () => props.grid.active.cancelEdit(props.rowIndex, props.colIndex),
+  };
+  return (
+    <div class="vui-grid__editor" aria-busy={props.grid.active.pending() || undefined}>
+      <Show
+        when={props.column.editor}
+        keyed
+        fallback={
+          <GridNativeEditor
+            context={context}
+            options={props.column.options}
+            numeric={props.column.type === 'number'}
+            label={typeof props.column.label === 'string' ? props.column.label : props.column.key}
+            onBlur={() => props.grid.active.commitOnBlur()}
+          />
+        }
       >
-        <For each={options()}>
-          {(o) => (
-            <option value={o} selected={o === props.grid.active.draft()}>
-              {o}
-            </option>
-          )}
-        </For>
-      </select>
-    )}
-  </Show>
-);
+        {(render) => render(context)}
+      </Show>
+      <Show when={props.grid.active.error()}>
+        {(message) => (
+          <span id={errorId} role="alert" class="vui-grid__edit-error">
+            {message()}
+          </span>
+        )}
+      </Show>
+    </div>
+  );
+};

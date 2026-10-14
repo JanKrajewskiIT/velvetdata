@@ -21,7 +21,14 @@ export const dataEn = defineDictionary({
       empty: 'No price data',
       error: 'The chart could not be displayed. Check the data or try again.',
       retry: 'Try again',
-      status: { idle: 'Idle', pending: 'Connecting…', live: 'Live', error: 'Connection error' },
+      stale: 'Data may be out of date',
+      status: {
+        idle: 'Idle',
+        pending: 'Connecting…',
+        live: 'Live',
+        error: 'Chart or connection error',
+        reconnecting: 'Reconnecting…',
+      },
     },
     columnManager: {
       title: 'Columns',
@@ -54,6 +61,10 @@ export const dataEn = defineDictionary({
       nothingPinned: 'Nothing pinned',
     },
     dataGrid: {
+      loading: 'Loading records…',
+      retry: 'Try again',
+      invalidNumber: 'Enter a valid number.',
+      saveError: 'The change could not be saved. Try again.',
       label: 'Data grid',
       viewSettings: 'View settings',
       resetView: 'Reset view',
@@ -84,10 +95,13 @@ export const dataEn = defineDictionary({
       rendering: 'Rendering {count} · rows {range}',
     },
     virtualList: {
+      label: 'Record list',
+      loadError: 'Couldn’t load more records. Try again.',
       loadingLabel: 'Loading more…',
       empty: 'Nothing to show',
     },
     queryBuilder: {
+      invalidValue: 'Enter a valid value for this condition.',
       empty: 'No conditions — every record matches.',
       allRecords: 'All records',
       clearRules: 'Clear conditions',

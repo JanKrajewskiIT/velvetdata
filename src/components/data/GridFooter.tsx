@@ -21,9 +21,9 @@ export const GridFooter = <T extends object>(props: GridFooterProps<T>) => {
             b: (children) => <b>{children}</b>,
           })}
         </span>
-        <Show when={props.grid.config.selectable && props.grid.selection.selectedRows().length > 0}>
+        <Show when={props.grid.config.selectable && props.grid.selection.selectedKeys().length > 0}>
           <span>
-            <GridSelectedCount count={props.grid.selection.selectedRows().length} />
+            <GridSelectedCount count={props.grid.selection.selectedKeys().length} />
           </span>
         </Show>
         <Show when={typeof props.grid.config.footer !== 'boolean'}>

@@ -1,4 +1,4 @@
-import { Checkbox } from '@jankrajewskiit/ui';
+import { Checkbox } from '@jankrajewskiit/ui/bare';
 import { cx } from '@jankrajewskiit/ui/common';
 import { createMemo, For, Show } from 'solid-js';
 
@@ -52,7 +52,7 @@ export const GridRow = <T extends object>(props: GridRowProps<T>) => {
         </Show>
         <For each={props.grid.view.cols().map((column) => column.key)}>
           {(columnKey, ci) => {
-            const column = createMemo(() => props.grid.view.cols().find((candidate) => candidate.key === columnKey));
+            const column = createMemo(() => props.grid.view.columnsByKey().get(columnKey));
             return (
               <Show when={column()}>
                 {(current) => (

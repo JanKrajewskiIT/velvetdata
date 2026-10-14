@@ -1,4 +1,4 @@
-import { cellText, clamp, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
+import { cellText, clamp, reportAsyncError, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
 import type { Accessor, JSX } from 'solid-js';
 
 import type { GridActiveCell } from './createGridActiveCell';
@@ -7,8 +7,6 @@ import type { GridSelection } from './createGridSelection';
 import type { GridColumn } from './dataGridTypes';
 
 const PAGE_ROWS = 10;
-
-const warnClipboard = (error: unknown) => console.warn('DataGrid: copying the cell failed', error);
 
 export interface GridKeyboardOptions<T extends object> {
   active: GridActiveCell;
@@ -51,15 +49,15 @@ export const createGridKeyboard =
       options.selection.toggleRow(options.keyOf(record, row));
     } else if (e.key === 'Enter' || e.key === 'F2') {
       e.preventDefault();
-      if (column.editable) active.startEdit(row, col);
+      if (active.canEdit(col)) active.startEdit(row, col);
       else if (options.hasDetail()) options.expansion.toggleOpen(options.keyOf(record, row));
-    } else if ((e.key === 'Delete' || e.key === 'Backspace') && column.editable) {
+    } else if ((e.key === 'Delete' || e.key === 'Backspace') && active.canEdit(col)) {
       e.preventDefault();
       active.startEdit(row, col, '');
-    } else if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && column.editable) {
+    } else if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && active.canEdit(col)) {
       e.preventDefault();
       active.startEdit(row, col, e.key);
     } else if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
-      navigator.clipboard.writeText(cellText(rowValue(record, column.key))).catch(warnClipboard);
+      navigator.clipboard.writeText(cellText(rowValue(record, column.key))).catch(reportAsyncError);
     }
   };

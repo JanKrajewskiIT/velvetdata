@@ -1,5 +1,6 @@
 import { type Accessor, createEffect, onCleanup, onMount, untrack } from 'solid-js';
 
+import type { QueryField } from '../patterns/queryModel';
 import { parseGridView, serializeGridView } from './gridViewCodec';
 import type { GridViewState } from './gridViewTypes';
 
@@ -8,6 +9,7 @@ interface GridPersistenceOptions {
   view: Accessor<GridViewState>;
   restore: (view: GridViewState) => void;
   onError: (error: Error) => void;
+  fields: Accessor<readonly QueryField[]>;
 }
 
 export const createGridPersistence = (options: GridPersistenceOptions): void => {
@@ -47,7 +49,7 @@ export const createGridPersistence = (options: GridPersistenceOptions): void => 
           let saved: GridViewState | undefined;
           try {
             const json = window.localStorage.getItem(key);
-            if (json) saved = parseGridView(json);
+            if (json) saved = parseGridView(json, options.fields());
           } catch (cause) {
             // Preserve invalid settings until the view changes instead of overwriting them during hydration.
             lastWritten = untrack(options.view);

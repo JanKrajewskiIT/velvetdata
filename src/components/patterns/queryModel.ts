@@ -110,7 +110,7 @@ const firstOperator = (field: QueryField | undefined): string => operatorDefinit
 export const combinatorLabel = (combinator: QueryGroup['combinator'], translate: StaticTranslate): string =>
   translate(COMBINATOR_LABEL_KEYS[combinator]);
 
-export const createQueryId = (): string => createId('q');
+const createQueryId = (): string => createId('q');
 
 export const newQueryRule = (fields: QueryField[]): QueryRule => ({
   id: createQueryId(),

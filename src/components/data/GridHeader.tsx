@@ -1,4 +1,4 @@
-import { Checkbox } from '@jankrajewskiit/ui';
+import { Checkbox } from '@jankrajewskiit/ui/bare';
 import { For, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';

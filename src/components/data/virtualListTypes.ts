@@ -23,12 +23,22 @@ export interface VirtualListProps<T = unknown> {
   getKey?: (item: T, index: number) => RowKey;
   /** listbox semantics + selected styling. */
   selectable?: boolean;
+  interaction?: 'list' | 'listbox' | 'grid';
+  selectionMode?: 'single' | 'multiple';
+  defaultSelected?: RowKey | RowKey[];
+  onSelectionChange?: (selected: RowKey | RowKey[]) => void;
+  textValue?: (item: T) => string;
+  dataKey?: string | number;
   /** Selected key, or keys (multi). */
   selected?: RowKey | RowKey[];
   onSelect?: (key: RowKey, item: T) => void;
   /** Click / Enter. */
   onActivate?: (item: T, index: number) => void;
-  onEndReached?: () => void;
+  onEndReached?: (signal: AbortSignal) => unknown;
+  hasMore?: boolean;
+  error?: JSX.Element;
+  onLoadError?: (error: unknown) => void;
+  onRetry?: () => void;
   /** @default 200 */
   endThreshold?: number;
   loading?: boolean;
@@ -36,7 +46,7 @@ export interface VirtualListProps<T = unknown> {
   loadingLabel?: string;
   /** @default localized "Nothing to show" */
   empty?: JSX.Element;
-  /** Accessible name. */
+  /** Accessible name. @default localized "Record list" */
   label?: string;
   /** Hairline between rows. */
   divided?: boolean;

@@ -1,5 +1,13 @@
 import { useI18n } from '@jankrajewskiit/i18n';
-import { cellText, clamp, createFrameFocus, cx, rowId, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
+import {
+  cellText,
+  clamp,
+  createFrameFocus,
+  createRowIdentity,
+  cx,
+  type RowKey,
+  rowValue,
+} from '@jankrajewskiit/ui/common';
 import { createMemo, createSignal, For, type JSX, mergeProps, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
@@ -30,6 +38,7 @@ export interface VirtualTableProps<T extends object = object> {
   overscan?: number;
   /** Stable record key used for row identity and focus; falls back to the row index. @default 'id' */
   rowKey?: string;
+  getRowId?: (row: T) => RowKey;
   onRowClick?: (row: T) => void;
   class?: string;
 }
@@ -51,9 +60,13 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
   const translate = useTranslate();
   const i18n = useI18n();
   const [scrollTop, setScrollTop] = createSignal(0);
+  const identity = createRowIdentity<T>(
+    () => p.rowKey,
+    () => p.getRowId,
+  );
   const keys = createVirtualKeys(
     () => p.rows,
-    (row, index) => rowId(row, p.rowKey, index),
+    (row) => identity(row),
     'VirtualTable',
   );
   const [focusedKey, setFocusedKey] = createSignal<RowKey>();
@@ -74,7 +87,10 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
   const end = () => Math.min(count(), Math.ceil((scrollTop() + height()) / rowHeight()) + overscan());
   const visibleKeys = createMemo(() => {
     const first = start();
-    return keys.keys().slice(first, end());
+    const visible = keys.keys().slice(first, end());
+    const active = focusedKey();
+    if (active !== undefined && keys.indexOf(active) >= 0 && !visible.includes(active)) visible.push(active);
+    return visible.sort((a, b) => keys.indexOf(a) - keys.indexOf(b));
   });
   const template = () => p.columns.map((c) => (c.width ? `${c.width}px` : `minmax(0,${c.flex ?? 1}fr)`)).join(' ');
 
@@ -132,10 +148,14 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
         style={{ height: `${height()}px` }}
         role="rowgroup"
         aria-label={translate('velvetData.virtualTable.rowsCount', { count: count() })}
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- scroll viewport provides keyboard entry when the focused row is not rendered
-        tabIndex={focus() < start() || focus() >= end() ? 0 : -1}
+
+        tabIndex={focus() < 0 ? 0 : -1}
         onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
         onKeyDown={onKey}
+        onFocusIn={(event) => {
+          const row = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-vi]') : null;
+          if (row) setFocus(Number(row.dataset.vi));
+        }}
         onFocus={(e) => {
           if (e.target === e.currentTarget && focus() < 0) goTo(firstVisible());
         }}

@@ -6,7 +6,7 @@ export default defineConfig(async () =>
     {
       build: {
         lib: {
-          entry: { index: 'src/index.ts', tradingview: 'src/tradingview.ts' },
+          entry: { index: 'src/index.ts', bare: 'src/bare.ts', tradingview: 'src/tradingview.ts' },
           cssFileName: 'velvet-data',
         },
       },

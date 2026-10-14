@@ -1,4 +1,4 @@
-import { Button, SearchInput } from '@jankrajewskiit/ui';
+import { Button, SearchInput } from '@jankrajewskiit/ui/bare';
 import { cx } from '@jankrajewskiit/ui/common';
 import { createSignal, For, type JSX, mergeProps, Show } from 'solid-js';
 
@@ -11,8 +11,6 @@ import { createColumnDrag } from './createColumnDrag';
 import { createColumnKeyboard } from './createColumnKeyboard';
 import { createColumnModel } from './createColumnModel';
 import { createColumnSearch } from './createColumnSearch';
-
-export type { ColumnManagerProps, ColumnPin, ColumnState, ManagedColumn } from './columnManagerTypes';
 
 const SEARCH_MIN_COLUMNS = 8;
 

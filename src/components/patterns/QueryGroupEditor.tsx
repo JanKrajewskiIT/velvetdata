@@ -1,4 +1,4 @@
-import { Button, IconButton } from '@jankrajewskiit/ui';
+import { Button, IconButton } from '@jankrajewskiit/ui/bare';
 import { cx } from '@jankrajewskiit/ui/common';
 import { createMemo, For, Match, Show, Switch } from 'solid-js';
 

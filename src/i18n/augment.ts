@@ -1,4 +1,4 @@
-import type { velvetMessages } from '@jankrajewskiit/ui';
+import type { velvetMessages } from '@jankrajewskiit/ui/bare';
 
 import type { dataEn } from './en';
 

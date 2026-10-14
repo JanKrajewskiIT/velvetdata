@@ -1,4 +1,4 @@
-import { ColumnResize, Glyph } from '@jankrajewskiit/ui';
+import { ColumnResize, Glyph } from '@jankrajewskiit/ui/bare';
 import { columnName, cx, nextSort } from '@jankrajewskiit/ui/common';
 import { createMemo, Show } from 'solid-js';
 
@@ -12,7 +12,7 @@ export interface GridHeaderCellProps<T extends object> {
 
 export const GridHeaderCell = <T extends object>(props: GridHeaderCellProps<T>) => {
   const translate = useTranslate();
-  const column = createMemo(() => props.grid.view.cols().find((candidate) => candidate.key === props.columnKey));
+  const column = createMemo(() => props.grid.view.columnsByKey().get(props.columnKey));
   const sorted = () => props.grid.view.sort()?.key === props.columnKey;
   return (
     <Show when={column()}>

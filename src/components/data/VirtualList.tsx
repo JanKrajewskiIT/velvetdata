@@ -1,6 +1,6 @@
-import { EmptyText } from '@jankrajewskiit/ui';
-import { cx } from '@jankrajewskiit/ui/common';
-import { createMemo, For, type JSX, mergeProps, Show } from 'solid-js';
+import { Button, EmptyText } from '@jankrajewskiit/ui/bare';
+import { cx, INTERACTIVE_SELECTOR } from '@jankrajewskiit/ui/common';
+import { createEffect, createMemo, createSignal, For, type JSX, mergeProps, onCleanup, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import { createVirtualKeyboard } from './createVirtualKeyboard';
@@ -11,8 +11,6 @@ import { createVirtualSelection } from './createVirtualSelection';
 import { DEFAULT_VIEWPORT_HEIGHT } from './virtualDimensions';
 import type { VirtualListConfig, VirtualListItemState, VirtualListProps } from './virtualListTypes';
 import { isRowControl } from './virtualRowTarget';
-
-export type { VirtualListItemState, VirtualListProps } from './virtualListTypes';
 
 const LOADING_ROW_HEIGHT = 44;
 
@@ -38,42 +36,73 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
     props,
   );
   const translate = useTranslate();
+  const label = () => p.label ?? translate('velvetData.virtualList.label');
   const loadingLabel = () => p.loadingLabel ?? translate('velvetData.virtualList.loadingLabel');
   const empty = () => p.empty ?? translate('velvetData.virtualList.empty');
-  const { scrollTop, onScroll } = createVirtualScroll(p);
+  const [box, setBox] = createSignal<HTMLDivElement>();
+  const scrolling = createVirtualScroll(p, box);
+  const { scrollTop, onScroll } = scrolling;
+  const interaction = () => p.interaction ?? (p.selectable ? 'listbox' : 'list');
+  const loading = () => p.loading || scrolling.pending();
   const rows = createVirtualRows(p, scrollTop);
   const { count, height, gap, offsetAt, total, first, windowIndices } = rows;
   const { keys, isSelected, select, multiselectable } = createVirtualSelection(p);
+  const { focus, setFocus, goTo, onKey } = createVirtualKeyboard(p, rows, select, box, keys);
+  const renderedIndices = createMemo(() =>
+    [...new Set([...windowIndices(), ...(focus() >= 0 ? [focus()] : [])])].sort((a, b) => a - b),
+  );
   const visibleKeys = createMemo(() =>
-    windowIndices().flatMap((index) => {
+    renderedIndices().flatMap((index) => {
       const key = keys.keys()[index];
       return key === undefined ? [] : [key];
     }),
   );
-  let box!: HTMLDivElement;
-  const { focus, setFocus, goTo, onKey } = createVirtualKeyboard(p, rows, select, () => box, keys);
+  let warned = false;
+  createEffect(() => {
+    visibleKeys();
+    const element = box();
+    if (!element || interaction() !== 'listbox' || warned) return;
+    const frame = requestAnimationFrame(() => {
+      const options = element.querySelectorAll('[role="option"]');
+      if ([...options].some((option) => option.querySelector(INTERACTIVE_SELECTOR))) {
+        warned = true;
+        console.warn('VirtualList: interactive item content requires interaction="grid" or "list".');
+      }
+    });
+    onCleanup(() => cancelAnimationFrame(frame));
+  });
 
   return (
     <div class={cx('vui-vlist', p.divided && 'vui-vlist--divided', p.class)}>
       <div
-        ref={(element) => {
-          box = element;
-        }}
+        ref={setBox}
         class="vui-vlist__scroll"
         style={{ height: `${height()}px` }}
-        role={p.selectable ? 'listbox' : 'list'}
-        aria-label={p.label}
-        aria-multiselectable={multiselectable()}
-        aria-busy={p.loading || undefined}
-        tabIndex={focus() < 0 || !windowIndices().includes(focus()) ? 0 : -1}
+        role={interaction()}
+        aria-label={label()}
+        aria-multiselectable={interaction() === 'list' ? undefined : multiselectable()}
+        aria-busy={loading() || undefined}
+        aria-rowcount={interaction() === 'grid' ? count() : undefined}
+        aria-colcount={interaction() === 'grid' ? 1 : undefined}
+        tabIndex={focus() < 0 ? 0 : -1}
         onScroll={onScroll}
         onKeyDown={onKey}
+        onFocusIn={(event) => {
+          const row = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-vi]') : null;
+          if (row) setFocus(Number(row.dataset.vi));
+        }}
         onFocus={(e) => {
-          if (e.target === e.currentTarget && count()) goTo(first());
+          if (e.target === e.currentTarget && count()) {
+            const selected = p.items.findIndex((_item, index) => isSelected(index));
+            goTo(selected >= 0 ? selected : first());
+          }
         }}
       >
-        <Show when={count() > 0 || p.loading} fallback={<EmptyText class="vui-vlist__empty">{empty()}</EmptyText>}>
-          <div class="vui-vlist__inner" style={{ height: `${total() + (p.loading ? LOADING_ROW_HEIGHT : 0)}px` }}>
+        <Show
+          when={count() > 0 || loading() || p.error || scrolling.failed()}
+          fallback={<EmptyText class="vui-vlist__empty">{empty()}</EmptyText>}
+        >
+          <div class="vui-vlist__inner" style={{ height: `${total() + (loading() ? LOADING_ROW_HEIGHT : 0)}px` }}>
             <For each={visibleKeys()}>
               {(key) => {
                 const i = () => keys.indexOf(key);
@@ -91,10 +120,11 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
                   // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- option rows are driven by the listbox owner's onKeyDown (roving tabindex)
                   <div
                     data-vi={i()}
-                    role={p.selectable ? 'option' : 'listitem'}
-                    aria-selected={p.selectable ? selected() : undefined}
-                    aria-setsize={count()}
-                    aria-posinset={i() + 1}
+                    role={interaction() === 'grid' ? 'row' : interaction() === 'listbox' ? 'option' : 'listitem'}
+                    aria-selected={p.selectable && interaction() !== 'list' ? selected() : undefined}
+                    aria-setsize={interaction() === 'grid' ? undefined : count()}
+                    aria-posinset={interaction() === 'grid' ? undefined : i() + 1}
+                    aria-rowindex={interaction() === 'grid' ? i() + 1 : undefined}
                     tabIndex={i() === focus() ? 0 : -1}
                     class={cx(
                       'vui-vlist__item',
@@ -113,18 +143,26 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
                       p.onActivate?.(item, index);
                     }}
                   >
-                    <Show when={record()} keyed>
-                      {(entry) => (
-                        <Show when={p.renderItem} keyed fallback={String(entry.item)}>
-                          {(render) => render(entry.item, entry.index, state) ?? String(entry.item)}
-                        </Show>
-                      )}
-                    </Show>
+                    <div
+                      role={interaction() === 'grid' ? 'gridcell' : 'presentation'}
+                      style={{
+                        display: interaction() === 'grid' ? 'block' : 'contents',
+                        height: interaction() === 'grid' ? '100%' : undefined,
+                      }}
+                    >
+                      <Show when={record()} keyed>
+                        {(entry) => (
+                          <Show when={p.renderItem} keyed fallback={String(entry.item)}>
+                            {(render) => render(entry.item, entry.index, state) ?? String(entry.item)}
+                          </Show>
+                        )}
+                      </Show>
+                    </div>
                   </div>
                 );
               }}
             </For>
-            <Show when={p.loading}>
+            <Show when={loading()}>
               <div class="vui-vlist__loading" style={{ top: `${total()}px` }} role="status">
                 <span class="vui-loader vui-loader--ring vui-loader--sm" aria-hidden="true" />
                 {loadingLabel()}
@@ -133,6 +171,21 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
           </div>
         </Show>
       </div>
+      <Show when={p.error || scrolling.failed()}>
+        <div role="alert" class="vui-vlist__error">
+          {p.error ?? translate('velvetData.virtualList.loadError')}
+          <Button
+            size="xs"
+            disabled={!!p.error && !p.onRetry}
+            onClick={() => {
+              p.onRetry?.();
+              scrolling.retry();
+            }}
+          >
+            {translate('velvetData.dataGrid.retry')}
+          </Button>
+        </div>
+      </Show>
     </div>
   );
 };

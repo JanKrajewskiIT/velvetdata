@@ -3,8 +3,8 @@ import type { JSX } from 'solid-js';
 
 import type { QueryField } from '../patterns/queryModel';
 import type { ColumnPin } from './columnManagerTypes';
+import type { GridBulkSelection, GridEditor } from './gridEditorTypes';
 import type { GridViewState } from './gridViewTypes';
-
 export interface GridColumn<T extends object = object> {
   key: string;
   label: JSX.Element;
@@ -26,6 +26,10 @@ export interface GridColumn<T extends object = object> {
   editable?: boolean;
   /** Edit with a select. */
   options?: string[];
+  editor?: GridEditor<T>;
+  /** Throws when the draft cannot be parsed. */
+  parseValue?: (draft: string, row: T) => unknown;
+  validate?: (value: unknown, row: T) => string | undefined | Promise<string | undefined>;
   format?: (value: unknown) => JSX.Element;
   render?: (row: T) => JSX.Element;
   /** Start pinned (frozen). */
@@ -52,6 +56,8 @@ export interface GridRowChange {
 export interface DataGridProps<T extends object = object> {
   columns: GridColumn<T>[];
   rows: T[];
+  /** Change when replacing the logical dataset while reusing row IDs. */
+  dataKey?: string | number;
   /** @default 'id' */
   rowKey?: string;
   /** Stable unique identity, required when records have no key field and are replaced or reordered. */
@@ -74,11 +80,16 @@ export interface DataGridProps<T extends object = object> {
   virtual?: boolean;
   /** Override the design-system row height in px; otherwise measure it (initial estimate: 36). */
   rowHeight?: number;
+  /** Refresh offscreen measurements after in-place detail or theme/density changes. */
+  measurementKey?: unknown;
   /** Additional rows above and below the viewport. @default 6 */
   overscan?: number;
   /** Accessible grid name. */
   label?: string;
-  onRowsChange?: (rows: T[], change: GridRowChange) => void;
+  onRowsChange?: (rows: T[], change: GridRowChange) => void | Promise<void>;
+  onEditError?: (error: unknown, change: GridRowChange) => void;
+  invalidNumberText?: string;
+  saveErrorText?: string;
   /** Scroll area height in px. @default 360 */
   height?: number;
   /** Pin the first column when no column sets pin. @default true */
@@ -88,9 +99,15 @@ export interface DataGridProps<T extends object = object> {
   selectable?: boolean;
   /** Selected row keys (controlled). */
   selected?: RowKey[];
+  defaultSelected?: RowKey[];
+  loading?: boolean;
+  error?: JSX.Element;
+  onRetry?: () => void;
   onSelectionChange?: (keys: RowKey[]) => void;
   /** Buttons shown in the toolbar while rows are selected. */
   bulkActions?: (rows: T[]) => JSX.Element;
+  /** Includes unloaded selected keys; the consumer resolves records and owns server actions. */
+  bulkSelectionActions?: (selection: GridBulkSelection<T>) => JSX.Element;
   /** Expandable detail panel under a row. */
   renderDetail?: (row: T) => JSX.Element;
   /** Free-text filter across visible columns. */
@@ -111,4 +128,3 @@ export interface DataGridProps<T extends object = object> {
 }
 
 export type CellPosition = { row: number; col: number };
-export type EditMove = 'down' | 'right' | 'left' | 'stay';

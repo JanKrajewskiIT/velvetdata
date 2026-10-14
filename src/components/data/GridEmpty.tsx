@@ -1,4 +1,4 @@
-import { EmptyText } from '@jankrajewskiit/ui';
+import { EmptyText } from '@jankrajewskiit/ui/bare';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import type { DataGridController } from './dataGridController';

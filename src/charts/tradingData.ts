@@ -1,6 +1,6 @@
 import type { TradingViewChartPoint } from './tradingTypes';
 
-export const validateTradingPoint = (point: TradingViewChartPoint): void => {
+const validateTradingPoint = (point: TradingViewChartPoint): void => {
   if (!Number.isSafeInteger(point.time) || point.time < 0 || point.time > 8_640_000_000_000)
     throw new RangeError('Trading point time must be a nonnegative Unix timestamp in seconds.');
   if (![point.open, point.high, point.low, point.close, point.volume].every(Number.isFinite))
@@ -29,10 +29,47 @@ export const mergeTradingPoints = (
 ): readonly TradingViewChartPoint[] => {
   if (!Number.isSafeInteger(maxPoints) || maxPoints <= 0) throw new RangeError('maxPoints must be a positive integer.');
   validateTradingData(current);
-  const points = new Map(current.map((point) => [point.time, point]));
+  const points = new Map<number, TradingViewChartPoint>();
   for (const point of incoming) {
     validateTradingPoint(point);
     points.set(point.time, point);
   }
-  return [...points.values()].sort((a, b) => a.time - b.time).slice(-maxPoints);
+  const updates = [...points.values()].sort((a, b) => a.time - b.time);
+  const merged: TradingViewChartPoint[] = [];
+  let index = 0;
+  let updateIndex = 0;
+  while (index < current.length || updateIndex < updates.length) {
+    const previous = current[index];
+    const next = updates[updateIndex];
+    if (previous && (!next || previous.time < next.time)) {
+      merged.push(previous);
+      index++;
+    } else if (next) {
+      merged.push(next);
+      updateIndex++;
+      if (previous?.time === next.time) index++;
+    }
+  }
+  return merged.slice(-maxPoints);
+};
+
+export const firstTradingChange = (
+  previous: readonly TradingViewChartPoint[],
+  next: readonly TradingViewChartPoint[],
+): number => {
+  const count = Math.min(previous.length, next.length);
+  for (let index = 0; index < count; index++) {
+    const before = previous[index];
+    const after = next[index];
+    if (
+      before?.time !== after?.time ||
+      before?.open !== after?.open ||
+      before?.high !== after?.high ||
+      before?.low !== after?.low ||
+      before?.close !== after?.close ||
+      before?.volume !== after?.volume
+    )
+      return index;
+  }
+  return count;
 };

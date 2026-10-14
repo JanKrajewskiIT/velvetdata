@@ -1,5 +1,5 @@
-import { Button } from '@jankrajewskiit/ui';
-import { cx, rowId, type RowKey } from '@jankrajewskiit/ui/common';
+import { Button } from '@jankrajewskiit/ui/bare';
+import { createRowIdentity, cx, type RowKey } from '@jankrajewskiit/ui/common';
 import { createEffect, createMemo, createSignal, type JSX, mergeProps, onCleanup, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
@@ -19,9 +19,6 @@ import { GridEmpty } from './GridEmpty';
 import { GridFooter } from './GridFooter';
 import { GridHeader } from './GridHeader';
 import { GridToolbar } from './GridToolbar';
-
-export type { DataGridProps, GridColumn, GridRowChange } from './dataGridTypes';
-export type { GridViewState } from './gridViewTypes';
 
 /**
  * Advanced data grid. Spreadsheet core: single active cell, arrows / Home / End / PageUp/Down, Enter / F2 / typing edits,
@@ -50,10 +47,14 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
   const [scrolledRight, setScrolledRight] = createSignal(false);
   const [gridElement, setGridElement] = createSignal<HTMLDivElement>();
   const translate = useTranslate();
+  const identity = createRowIdentity<T>(
+    () => p.rowKey,
+    () => p.getRowId,
+  );
 
   const sourceKeys = createVirtualKeys(
     () => p.rows,
-    (row, index) => p.getRowId?.(row) ?? rowId(row, p.rowKey, index),
+    (row) => identity(row),
     'DataGrid',
   );
   const identities = createMemo(() => {
@@ -65,7 +66,7 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
     });
     return result;
   });
-  const keyOf = (row: T, index: number) => identities().get(row) ?? p.getRowId?.(row) ?? rowId(row, p.rowKey, index);
+  const keyOf = (row: T, _index: number) => identities().get(row) ?? identity(row);
   const view = createGridView<T>(() => p);
   const rowKeys = createVirtualKeys(view.rows, keyOf, 'DataGrid');
   const layout = createGridLayout<T>({
@@ -78,11 +79,13 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
   const selection = createGridSelection<T>({
     selected: () => p.selected,
     onChange: (keys) => p.onSelectionChange?.(keys),
+    defaultSelected: p.defaultSelected,
+    dataKey: () => p.dataKey,
     rows: () => p.rows,
     view: view.rows,
     keyOf,
   });
-  const expansion = createGridExpansion();
+  const expansion = createGridExpansion(sourceKeys.keys, () => p.dataKey);
   const [getWindow, setWindow] = createSignal<GridWindow>();
   const active = createGridActiveCell<T>({
     getGrid: gridElement,
@@ -92,10 +95,18 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
     keyOf,
     ensureVisible: (index) => getWindow()?.ensureVisible(index),
     onRowsChange: (rows, change) => p.onRowsChange?.(rows, change),
+    onEditError: (error, change) => p.onEditError?.(error, change),
+    invalidNumberText: () => p.invalidNumberText ?? translate('velvetData.dataGrid.invalidNumber'),
+    saveErrorText: () => p.saveErrorText ?? translate('velvetData.dataGrid.saveError'),
+    dataKey: () => p.dataKey,
+    canEdit: () => !!p.onRowsChange && !p.loading && !p.error,
   });
+  const recordsByKey = createMemo(() => new Map(view.rows().map((row, index) => [keyOf(row, index), row])));
   const window = createGridWindow({
     config: () => p,
     keys: rowKeys,
+    records: recordsByKey,
+    layout: layout.template,
     expansion,
     viewport: gridElement,
     active: active.cell,
@@ -135,6 +146,16 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
   return (
     <div class={cx('vui-dgrid', p.class)}>
       <GridToolbar grid={grid} />
+      <Show when={p.error}>
+        <div role="alert" class="vui-dgrid__view-error">
+          {p.error}
+          <Show when={p.onRetry}>
+            <Button size="xs" onClick={() => p.onRetry?.()}>
+              {translate('velvetData.dataGrid.retry')}
+            </Button>
+          </Show>
+        </div>
+      </Show>
       <Show when={view.error()}>
         <div role="status" class="vui-dgrid__view-error">
           {translate('velvetData.dataGrid.viewError')}
@@ -151,6 +172,7 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
         aria-rowcount={window.rowCount()}
         aria-colcount={view.cols().length + (p.selectable ? 1 : 0)}
         aria-multiselectable={p.selectable || undefined}
+        aria-busy={p.loading || undefined}
         class={cx('vui-grid', scrolled() && 'vui-grid--scrolled', scrolledRight() && 'vui-grid--scrolled-right')}
         style={{
           height: `${p.height}px`,
@@ -167,7 +189,12 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
         }}
       >
         <GridHeader grid={grid} />
-        <Show when={view.rows().length === 0}>
+        <Show when={p.loading}>
+          <div role="status" class="vui-grid__empty">
+            {translate('velvetData.dataGrid.loading')}
+          </div>
+        </Show>
+        <Show when={!p.loading && !p.error && view.rows().length === 0}>
           <GridEmpty grid={grid} />
         </Show>
         <GridBody grid={grid} />

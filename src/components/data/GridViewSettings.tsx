@@ -1,4 +1,4 @@
-import { Button, Popover } from '@jankrajewskiit/ui';
+import { Button, Popover, reportAsyncError } from '@jankrajewskiit/ui/bare';
 import { createSignal, onCleanup, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
@@ -87,7 +87,7 @@ export const GridViewSettings = <T extends object>(props: GridViewSettingsProps<
           onChange={(event) => {
             const file = event.currentTarget.files?.[0];
             event.currentTarget.value = '';
-            void importFile(file);
+            void importFile(file).catch(reportAsyncError);
           }}
         />
         <Show when={reading()}>

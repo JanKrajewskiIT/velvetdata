@@ -1,4 +1,4 @@
-import { Count, SectionLabel } from '@jankrajewskiit/ui';
+import { Count, SectionLabel } from '@jankrajewskiit/ui/bare';
 import { cx } from '@jankrajewskiit/ui/common';
 import { For, type JSX, Show } from 'solid-js';
 

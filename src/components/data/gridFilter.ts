@@ -1,7 +1,9 @@
 import { cellText, rowValue } from '@jankrajewskiit/ui/common';
 
-import type { QueryGroup, QueryRule } from '../patterns/queryModel';
+import type { QueryFieldType, QueryGroup, QueryRule } from '../patterns/queryModel';
 import { VALUELESS_OPS } from '../patterns/queryModel';
+import { queryDate } from './queryDate';
+import { queryNumber } from './queryNumber';
 
 type QueryNode = QueryRule | QueryGroup;
 
@@ -16,13 +18,18 @@ export const countActiveRules = (node: QueryNode): number => {
   return isActive(node) ? 1 : 0;
 };
 
-const matchesRule = (rule: QueryRule, row: object, getValue?: (key: string) => unknown): boolean => {
+const matchesRule = (
+  rule: QueryRule,
+  row: object,
+  getValue?: (key: string) => unknown,
+  fieldType?: QueryFieldType,
+): boolean => {
   const value = getValue ? getValue(rule.field) : rowValue(row, rule.field);
   const text = cellText(value).toLowerCase();
   const operand = cellText(rule.value).toLowerCase();
-  const number = parseFloat(cellText(value));
-  const operandNumber = parseFloat(rule.value);
-  const isNumber = typeof value === 'number';
+  const number = queryNumber(value);
+  const operandNumber = queryNumber(rule.value);
+  const isNumber = fieldType === 'number' || typeof value === 'number';
   const isBlank = value == null || value === '';
   switch (rule.op) {
     case 'contains':
@@ -30,9 +37,13 @@ const matchesRule = (rule: QueryRule, row: object, getValue?: (key: string) => u
     case 'not_contains':
       return !text.includes(operand);
     case 'eq':
-      return isNumber ? number === operandNumber : text === operand;
+      return isNumber
+        ? number !== undefined && operandNumber !== undefined && number === operandNumber
+        : text === operand;
     case 'neq':
-      return isNumber ? number !== operandNumber : text !== operand;
+      return isNumber
+        ? number !== undefined && operandNumber !== undefined && number !== operandNumber
+        : text !== operand;
     case 'starts':
       return text.startsWith(operand);
     case 'ends':
@@ -42,34 +53,42 @@ const matchesRule = (rule: QueryRule, row: object, getValue?: (key: string) => u
     case 'not_empty':
       return !isBlank;
     case 'gt':
-      return number > operandNumber;
+      return number !== undefined && operandNumber !== undefined && number > operandNumber;
     case 'gte':
-      return number >= operandNumber;
+      return number !== undefined && operandNumber !== undefined && number >= operandNumber;
     case 'lt':
-      return number < operandNumber;
+      return number !== undefined && operandNumber !== undefined && number < operandNumber;
     case 'lte':
-      return number <= operandNumber;
+      return number !== undefined && operandNumber !== undefined && number <= operandNumber;
     case 'on':
-      return text.slice(0, 10) === operand;
     case 'before':
-      return text < operand;
-    case 'after':
-      return text > operand;
+    case 'after': {
+      const day = queryDate(value);
+      const operandDay = queryDate(rule.value);
+      if (day === undefined || operandDay === undefined) return false;
+      if (rule.op === 'on') return day === operandDay;
+      return rule.op === 'before' ? day < operandDay : day > operandDay;
+    }
     case 'true':
-      return !!value;
+      return value === true;
     case 'false':
-      return !value;
+      return value === false;
     default:
-      return true;
+      return false;
   }
 };
 
 /** Whether `row` satisfies every (and) or any (or) active rule of the query tree. */
-export const matchesQuery = (node: QueryNode, row: object, getValue?: (key: string) => unknown): boolean => {
-  if (!isGroup(node)) return matchesRule(node, row, getValue);
+export const matchesQuery = (
+  node: QueryNode,
+  row: object,
+  getValue?: (key: string) => unknown,
+  fieldType?: (key: string) => QueryFieldType | undefined,
+): boolean => {
+  if (!isGroup(node)) return matchesRule(node, row, getValue, fieldType?.(node.field));
   const active = node.rules.filter(isActive);
   if (!active.length) return true;
   return node.combinator === 'or'
-    ? active.some((r) => matchesQuery(r, row, getValue))
-    : active.every((r) => matchesQuery(r, row, getValue));
+    ? active.some((r) => matchesQuery(r, row, getValue, fieldType))
+    : active.every((r) => matchesQuery(r, row, getValue, fieldType));
 };

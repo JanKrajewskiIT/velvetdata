@@ -1,4 +1,4 @@
-import { Button, OptionSwitcher, Text } from '@jankrajewskiit/ui';
+import { Button, OptionSwitcher, Text } from '@jankrajewskiit/ui/bare';
 import { For, Show } from 'solid-js';
 
 import { useTranslate } from '../i18n/useTranslate';

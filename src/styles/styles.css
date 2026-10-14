@@ -4,3 +4,4 @@
 @import url('components/data/virtual-table.css');
 @import url('components/patterns/query-builder.css');
 @import url('extensions/data-grid.css');
+@import url('extensions/virtual-list.css');

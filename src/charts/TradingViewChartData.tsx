@@ -1,5 +1,5 @@
 import { useI18n } from '@jankrajewskiit/i18n';
-import { Table, type TableColumn } from '@jankrajewskiit/ui';
+import { Table, type TableColumn } from '@jankrajewskiit/ui/bare';
 import { createMemo } from 'solid-js';
 
 import { useTranslate } from '../i18n/useTranslate';

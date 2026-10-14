@@ -12,7 +12,7 @@ import {
   type UTCTimestamp,
 } from 'lightweight-charts';
 
-import { validateTradingData } from '../tradingData';
+import { firstTradingChange, validateTradingData } from '../tradingData';
 import type { TradingChartEngineFactory, TradingChartSnapshot, TradingViewChartPoint } from '../tradingTypes';
 import { readTradingPalette } from './tradingPalette';
 
@@ -62,17 +62,21 @@ export const createLightweightTradingEngine: TradingChartEngineFactory = (option
   };
   chart.subscribeCrosshairMove(emitPoint);
 
-  const updateSeries = (next: TradingChartSnapshot) => {
-    candles.setData(next.data.map((point) => ({ ...point, time: point.time as UTCTimestamp })));
+  const updateSeries = (next: TradingChartSnapshot, previous?: TradingChartSnapshot) => {
+    const changedAt = previous ? firstTradingChange(previous.data, next.data) : 0;
+    const incremental = !!previous && next.data.length >= previous.data.length && changedAt >= previous.data.length - 1;
+    if (incremental) {
+      for (const point of next.data.slice(changedAt)) candles.update({ ...point, time: point.time as UTCTimestamp });
+    } else candles.setData(next.data.map((point) => ({ ...point, time: point.time as UTCTimestamp })));
     volume.applyOptions({ visible: next.volume });
     candles.priceScale().applyOptions({ scaleMargins: { top: 0.1, bottom: next.volume ? 0.25 : 0.1 } });
-    volume.setData(
-      next.data.map((point) => ({
-        time: point.time as UTCTimestamp,
-        value: point.volume,
-        color: point.close >= point.open ? palette.up : palette.down,
-      })),
-    );
+    const volumePoints = (incremental ? next.data.slice(changedAt) : next.data).map((point) => ({
+      time: point.time as UTCTimestamp,
+      value: point.volume,
+      color: point.close >= point.open ? palette.up : palette.down,
+    }));
+    if (incremental) for (const point of volumePoints) volume.update(point);
+    else volume.setData(volumePoints);
     const ids = new Set(next.indicators.map((indicator) => indicator.id));
     for (const [id, line] of lines) {
       if (ids.has(id)) continue;
@@ -87,8 +91,40 @@ export const createLightweightTradingEngine: TradingChartEngineFactory = (option
         lines.set(indicator.id, line);
       }
       line.applyOptions({ color });
-      line.setData(indicator.points.map((point) => ({ time: point.time as UTCTimestamp, value: point.value })));
+      const before = previous?.indicators.find(
+        (item) => item.id === indicator.id && item.kind === indicator.kind && item.period === indicator.period,
+      );
+      let from = 0;
+      if (before) {
+        const count = Math.min(before.points.length, indicator.points.length);
+        while (
+          from < count &&
+          before.points[from]?.time === indicator.points[from]?.time &&
+          before.points[from]?.value === indicator.points[from]?.value
+        )
+          from++;
+      }
+      const append = before && indicator.points.length >= before.points.length && from >= before.points.length - 1;
+      const points = (append ? indicator.points.slice(from) : indicator.points).map((point) => ({
+        time: point.time as UTCTimestamp,
+        value: point.value,
+      }));
+      if (append) for (const point of points) line.update(point);
+      else line.setData(points);
     });
+    const sameLevels =
+      previous &&
+      previous.levels.length === next.levels.length &&
+      next.levels.every((level, index) => {
+        const previousLevel = previous.levels[index];
+        return (
+          previousLevel !== undefined &&
+          level.id === previousLevel.id &&
+          level.price === previousLevel.price &&
+          level.label === previousLevel.label
+        );
+      });
+    if (sameLevels) return;
     for (const line of priceLines) candles.removePriceLine(line);
     priceLines = next.levels.map((level) =>
       candles.createPriceLine({
@@ -140,10 +176,16 @@ export const createLightweightTradingEngine: TradingChartEngineFactory = (option
     update: (next) => {
       if (disposed) return;
       validateTradingData(next.data);
-      snapshot = next;
+      const previous = snapshot;
       data = new Map(next.data.map((point) => [point.time, point]));
       chart.applyOptions({ localization: { locale: next.locale } });
-      updateSeries(next);
+      try {
+        updateSeries(next, previous);
+      } catch (cause) {
+        snapshot = undefined;
+        throw cause;
+      }
+      snapshot = next;
       if (!fitted && next.data.length) {
         chart.timeScale().fitContent();
         fitted = true;

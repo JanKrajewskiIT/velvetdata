@@ -1,4 +1,4 @@
-import { velvetMessages } from '@jankrajewskiit/ui';
+import { velvetMessages } from '@jankrajewskiit/ui/bare';
 import { createLibraryMessages } from '@jankrajewskiit/ui/common';
 
 import { dataEn } from './en';

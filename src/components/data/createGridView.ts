@@ -16,6 +16,7 @@ import { sameGridView } from './sameGridView';
 
 export interface GridView<T extends object> {
   cols: Accessor<GridColumn<T>[]>;
+  columnsByKey: Accessor<ReadonlyMap<string, GridColumn<T>>>;
   rows: Accessor<T[]>;
   state: Accessor<GridViewState>;
   widths: Accessor<Record<string, number>>;
@@ -81,6 +82,9 @@ export const createGridView = <T extends object>(config: Accessor<DataGridProps<
   };
   const update = (next: Partial<GridViewState>) => replace({ ...state(), ...next });
   const cols = createMemo(() => applyColumns(config().columns, columnState()));
+  const columnsByKey = createMemo(() => new Map(cols().map((column) => [column.key, column])));
+  const definitionsByKey = createMemo(() => new Map(config().columns.map((column) => [column.key, column])));
+  const fieldTypes = createMemo(() => new Map((config().filterFields ?? []).map((field) => [field.key, field.type])));
   const activeFilters = () => {
     const current = query();
     return current ? countActiveRules(current) : 0;
@@ -102,27 +106,40 @@ export const createGridView = <T extends object>(config: Accessor<DataGridProps<
       const currentQuery = query();
       if (currentQuery && activeFilters())
         out = out.filter((row) =>
-          matchesQuery(currentQuery, row, (key) => {
-            const column = config().columns.find((candidate) => candidate.key === key);
-            return column?.filterAccessor ? column.filterAccessor(row) : rowValue(row, key);
-          }),
+          matchesQuery(
+            currentQuery,
+            row,
+            (key) => {
+              const column = definitionsByKey().get(key);
+              return column?.filterAccessor ? column.filterAccessor(row) : rowValue(row, key);
+            },
+            (key) => fieldTypes().get(key),
+          ),
         );
     }
     const currentSort = sort();
-    const column = currentSort && config().columns.find((candidate) => candidate.key === currentSort.key);
-    if (!config().manualSorting && currentSort && column) {
-      const value = (row: T) => (column.sortAccessor ? column.sortAccessor(row) : rowValue(row, column.key));
+    const staticColumn = currentSort && definitionsByKey().get(currentSort.key);
+    if (!config().manualSorting && currentSort && staticColumn) {
+      const value = (row: T) =>
+        staticColumn.sortAccessor ? staticColumn.sortAccessor(row) : rowValue(row, staticColumn.key);
       out = [...out].sort(
         (a, b) =>
-          (column.sortFn ? column.sortFn(a, b) : compareValues(value(a), value(b))) *
+          (staticColumn.sortFn ? staticColumn.sortFn(a, b) : compareValues(value(a), value(b))) *
           (currentSort.dir === 'asc' ? 1 : -1),
       );
     }
     return out;
   });
-  createGridPersistence({ key: () => config().persistenceKey, view: state, restore: replace, onError: reportError });
+  createGridPersistence({
+    key: () => config().persistenceKey,
+    view: state,
+    restore: replace,
+    onError: reportError,
+    fields: () => config().filterFields ?? [],
+  });
   return {
     cols,
+    columnsByKey,
     rows,
     state,
     widths,
@@ -148,7 +165,7 @@ export const createGridView = <T extends object>(config: Accessor<DataGridProps<
     importSettings: (json) => {
       let next: GridViewState;
       try {
-        next = parseGridView(json);
+        next = parseGridView(json, config().filterFields ?? []);
       } catch (cause) {
         reportError(cause);
         return false;

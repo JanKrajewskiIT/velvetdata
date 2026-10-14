@@ -5,11 +5,14 @@ import type { GridExpansion } from './createGridExpansion';
 import type { VirtualKeys } from './createVirtualKeys';
 import type { CellPosition, DataGridProps } from './dataGridTypes';
 import { DEFAULT_GRID_HEIGHT, DEFAULT_GRID_OVERSCAN, ESTIMATED_GRID_ROW_HEIGHT } from './gridColumns';
+import { createGridHeightIndex } from './gridHeightIndex';
 import { nonnegativeInteger, positiveSize } from './virtualDimensions';
 
 interface GridWindowOptions<T extends object> {
   config: Accessor<DataGridProps<T>>;
   keys: VirtualKeys;
+  records: Accessor<ReadonlyMap<RowKey, T>>;
+  layout: Accessor<string>;
   expansion: GridExpansion;
   viewport: Accessor<HTMLDivElement | undefined>;
   active: Accessor<CellPosition>;
@@ -28,13 +31,23 @@ export interface GridWindow {
   rowHeight: Accessor<number>;
 }
 
-/** Variable-height window: keep focused/editing rows mounted and measure expanded details with their owner. */
 export const createGridWindow = <T extends object>(options: GridWindowOptions<T>): GridWindow => {
   const [scroll, setScroll] = createSignal(0);
   const [height, setHeight] = createSignal(DEFAULT_GRID_HEIGHT);
   const [header, setHeader] = createSignal(ESTIMATED_GRID_ROW_HEIGHT);
-  const [measured, setMeasured] = createSignal(new Map<RowKey, { height: number; open: boolean }>());
+  const [revision, setRevision] = createSignal(0);
   const rowHeight = () => positiveSize(options.config().rowHeight ?? header(), ESTIMATED_GRID_ROW_HEIGHT);
+  const context = createMemo(() => ({
+    layout: options.layout(),
+    height: rowHeight(),
+    detail: options.config().renderDetail,
+    version: options.config().measurementKey,
+    dataKey: options.config().dataKey,
+  }));
+  type Measurement = { height: number; open: boolean; row: T; context: ReturnType<typeof context> };
+  const measured = new Map<RowKey, Measurement>();
+  const queued = new Map<RowKey, Measurement>();
+  let frame = 0;
   const isOpen = (key: RowKey) => !!options.config().renderDetail && options.expansion.open().has(key);
   const update = () => {
     const element = options.viewport();
@@ -53,83 +66,102 @@ export const createGridWindow = <T extends object>(options: GridWindowOptions<T>
     onCleanup(() => observer.disconnect());
   });
   const positions = createMemo(() => {
-    let top = 0;
-    let detailCount = 0;
-    const entries = options.keys.keys().map((key, index) => {
-      const open = isOpen(key);
-      const saved = measured().get(key);
-      const size = saved?.open === open ? saved.height : rowHeight() * (open ? 4 : 1);
-      const entry = { key, index, top, height: size, rowIndex: index + detailCount + 2 };
-      top += size;
-      if (open) detailCount++;
-      return entry;
+    const currentContext = context();
+    const records = options.records();
+    const keys = options.keys.keys();
+    const expanded = keys.map(isOpen);
+    const sizes = keys.map((key, index) => {
+      const saved = measured.get(key);
+      return saved &&
+        saved.context === currentContext &&
+        saved.row === records.get(key) &&
+        saved.open === expanded[index]
+        ? saved.height
+        : rowHeight() * (expanded[index] ? 4 : 1);
     });
-    return { entries, total: top, rowCount: entries.length + detailCount + 1 };
+    return createGridHeightIndex(keys, sizes, expanded);
   });
   createEffect(() => {
     const keys = new Set(options.keys.keys());
-    setMeasured((current) => {
-      if ([...current.keys()].every((key) => keys.has(key))) return current;
-      return new Map([...current].filter(([key]) => keys.has(key)));
-    });
+    for (const key of measured.keys()) if (!keys.has(key)) measured.delete(key);
+    for (const key of queued.keys()) if (!keys.has(key)) queued.delete(key);
   });
   const range = createMemo(() => {
-    const entryAt = (index: number) => {
-      const entry = positions().entries[index];
-      if (entry === undefined) throw new RangeError('DataGrid window index is out of range.');
-      return entry;
-    };
-    if (!options.config().virtual) return positions().entries;
+    revision();
+    const index = positions();
+    if (!options.config().virtual) return Array.from({ length: index.count }, (_, at) => index.entryAt(at));
     const overscan = nonnegativeInteger(options.config().overscan ?? DEFAULT_GRID_OVERSCAN, DEFAULT_GRID_OVERSCAN);
-    const top = Math.max(0, scroll() - header());
-    const bottom = scroll() + height();
-    let low = 0;
-    let high = positions().entries.length;
-    while (low < high) {
-      const middle = (low + high) >>> 1;
-      const entry = entryAt(middle);
-      if (entry.top + entry.height <= top) low = middle + 1;
-      else high = middle;
-    }
-    const start = Math.max(0, low - overscan);
-    let end = low;
-    while (end < positions().entries.length && entryAt(end).top < bottom) end++;
-    end = Math.min(positions().entries.length, end + overscan);
+    const first = index.firstVisible(Math.max(0, scroll() - header()));
+    let end = first;
+    while (end < index.count && index.entryAt(end).top < scroll() + height()) end++;
+    const start = Math.max(0, first - overscan);
+    end = Math.min(index.count, end + overscan);
     const indices = new Set<number>();
-    for (let index = start; index < end; index++) indices.add(index);
-    for (const index of [options.active().row, options.edit()?.row]) {
-      if (index !== undefined && index >= 0 && index < positions().entries.length) indices.add(index);
+    for (let at = start; at < end; at++) indices.add(at);
+    for (const at of [options.active().row, options.edit()?.row]) {
+      if (at !== undefined && at >= 0 && at < index.count) indices.add(at);
     }
-    return [...indices].sort((a, b) => a - b).map(entryAt);
+    return [...indices].sort((a, b) => a - b).map(index.entryAt);
   });
+  const visibleKeys = createMemo(() => range().map((entry) => entry.key));
   const gaps = createMemo(() => {
+    revision();
     let previousEnd = 0;
     const before = new Map<RowKey, number>();
     for (const entry of range()) {
       before.set(entry.key, Math.max(0, entry.top - previousEnd));
       previousEnd = entry.top + entry.height;
     }
-    return { before, tail: Math.max(0, positions().total - previousEnd) };
+    return { before, tail: Math.max(0, positions().total() - previousEnd) };
+  });
+  const flush = () => {
+    frame = 0;
+    const index = positions();
+    for (const [key, value] of queued) {
+      if (value.context !== context() || value.row !== options.records().get(key) || value.open !== isOpen(key))
+        continue;
+      measured.set(key, value);
+      index.update(key, value.height);
+    }
+    queued.clear();
+    setRevision((value) => value + 1);
+  };
+  onCleanup(() => {
+    cancelAnimationFrame(frame);
+    queued.clear();
+    measured.clear();
   });
   return {
-    keys: () => range().map((entry) => entry.key),
+    keys: visibleKeys,
     update,
     rowHeight,
     measure: (key, size) => {
+      if (!Number.isFinite(size) || size <= 0) return;
+      const row = options.records().get(key);
+      if (!row) return;
+      const currentContext = context();
       const open = isOpen(key);
-      const previous = measured().get(key);
+      const previous = queued.get(key) ?? measured.get(key);
+      if (
+        previous?.height === size &&
+        previous.context === currentContext &&
+        previous.row === row &&
+        previous.open === open
+      )
+        return;
       if (!previous && !open && size === rowHeight()) return;
-      if (!Number.isFinite(size) || size <= 0 || (previous?.height === size && previous.open === open)) return;
-      setMeasured((current) => new Map(current).set(key, { height: size, open }));
+      queued.set(key, { height: size, open, row, context: currentContext });
+      if (!frame) frame = requestAnimationFrame(flush);
     },
     gapBefore: (key) => (options.config().virtual ? (gaps().before.get(key) ?? 0) : 0),
     tail: () => (options.config().virtual ? gaps().tail : 0),
-    rowIndex: (index) => positions().entries[index]?.rowIndex ?? index + 2,
+    rowIndex: (at) => (at >= 0 && at < positions().count ? positions().entryAt(at).rowIndex : at + 2),
     rowCount: () => positions().rowCount,
-    ensureVisible: (index) => {
+    ensureVisible: (at) => {
       const element = options.viewport();
-      const entry = positions().entries[index];
-      if (!element || !entry) return;
+      const index = positions();
+      if (!element || at < 0 || at >= index.count) return;
+      const entry = index.entryAt(at);
       if (entry.top < element.scrollTop) element.scrollTop = entry.top;
       else if (entry.top + entry.height + header() > element.scrollTop + element.clientHeight)
         element.scrollTop =

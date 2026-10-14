@@ -3,7 +3,7 @@ import { type Accessor, createSignal } from 'solid-js';
 import type { ColumnPin, ColumnState } from './columnManagerTypes';
 import type { ColumnModel } from './createColumnModel';
 
-export interface DropTarget {
+interface DropTarget {
   key: string | null;
   pin: ColumnPin | null;
   pos: 'above' | 'below';

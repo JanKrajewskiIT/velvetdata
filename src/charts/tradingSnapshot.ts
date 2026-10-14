@@ -1,4 +1,4 @@
-import { validateTradingData } from './tradingData';
+import { firstTradingChange, validateTradingData } from './tradingData';
 import { calculateTradingIndicator } from './tradingIndicators';
 import type { TradingChartSnapshot, TradingIndicator, TradingPriceLevel, TradingViewChartPoint } from './tradingTypes';
 
@@ -8,13 +8,16 @@ export const createTradingSnapshot = (
   levels: readonly TradingPriceLevel[],
   volume: boolean,
   locale: string,
+  previous?: TradingChartSnapshot,
 ): TradingChartSnapshot => {
   validateTradingData(data);
   const ids = new Set<string>();
+  const changedAt = previous ? firstTradingChange(previous.data, data) : 0;
+  const previousIndicators = new Map(previous?.indicators.map((indicator) => [indicator.id, indicator]));
   const series = indicators.map((indicator) => {
     if (!indicator.id || ids.has(indicator.id)) throw new RangeError('Indicator IDs must be nonempty and unique.');
     ids.add(indicator.id);
-    return calculateTradingIndicator(data, indicator);
+    return calculateTradingIndicator(data, indicator, previousIndicators.get(indicator.id), changedAt);
   });
   ids.clear();
   for (const level of levels) {

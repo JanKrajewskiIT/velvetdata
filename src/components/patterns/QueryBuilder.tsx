@@ -1,13 +1,10 @@
-import { SectionLabel } from '@jankrajewskiit/ui';
+import { SectionLabel } from '@jankrajewskiit/ui/bare';
 import { createControllable, cx } from '@jankrajewskiit/ui/common';
 import { mergeProps, Show, untrack } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import { QueryGroupEditor } from './QueryGroupEditor';
 import { clearQuery, describeQuery, emptyQuery, type QueryField, type QueryGroup } from './queryModel';
-
-export type { QueryField, QueryFieldType, QueryGroup, QueryNode, QueryOperatorValue, QueryRule } from './queryModel';
-export { clearQuery, describeQuery, emptyQuery } from './queryModel';
 
 export interface QueryBuilderProps {
   fields: QueryField[];

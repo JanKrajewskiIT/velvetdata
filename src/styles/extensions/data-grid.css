@@ -50,3 +50,26 @@
     grid-column: 1 / -1;
   }
 }
+
+.vui-grid__editor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.vui-grid__cell--edit {
+  overflow: visible;
+  position: relative;
+  z-index: var(--z-dropdown);
+}
+
+.vui-grid__edit-error {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 100%;
+  z-index: var(--z-dropdown);
+  padding: var(--space-2);
+  background: var(--bg-raised);
+  color: var(--status-danger-fg);
+  white-space: normal;
+}

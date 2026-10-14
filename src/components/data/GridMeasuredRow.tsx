@@ -1,5 +1,5 @@
 import type { RowKey } from '@jankrajewskiit/ui/common';
-import { createEffect, onCleanup, onMount } from 'solid-js';
+import { createEffect, on, onCleanup, onMount } from 'solid-js';
 
 import type { DataGridController } from './dataGridController';
 import { GridRow } from './GridRow';
@@ -21,13 +21,23 @@ export const GridMeasuredRow = <T extends object>(props: GridMeasuredRowProps<T>
     observer.observe(element);
     onCleanup(() => observer.disconnect());
   });
-  createEffect(() => {
-    props.grid.expansion.open();
-    props.grid.layout.template();
-    queueMicrotask(() => {
-      if (element.isConnected) measure();
-    });
-  });
+  createEffect(
+    on(
+      () => [
+        props.grid.expansion.open(),
+        props.grid.layout.template(),
+        props.grid.config.measurementKey,
+        props.grid.config.dataKey,
+        props.grid.config.rowHeight,
+        props.row,
+      ],
+      () => {
+        queueMicrotask(() => {
+          if (element.isConnected) measure();
+        });
+      },
+    ),
+  );
   return (
     <div
       ref={(node) => {
