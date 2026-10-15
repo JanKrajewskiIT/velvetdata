@@ -83,7 +83,7 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@jankrajewskiit/configs": "^3.7.0",
     "@jankrajewskiit/i18n": "^3.7.0",
-    "@jankrajewskiit/ui": "^3.7.2",
+    "@jankrajewskiit/ui": "^3.7.3",
     "@size-limit/file": "^14.2.0",
     "@types/node": "^26.6.5",
     "@typescript/native": "npm:typescript@^7.0.2",
