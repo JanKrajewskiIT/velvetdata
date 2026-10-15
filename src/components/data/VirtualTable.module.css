@@ -1,0 +1,72 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-raised);
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: var(--data-table-columns);
+  align-items: center;
+  inset-inline: 0;
+  border-bottom: var(--border-width) solid var(--border-subtle);
+  position: absolute;
+  top: 0;
+  outline: none;
+
+  &:hover,
+  &[data-focused] {
+    background: var(--bg-hover);
+  }
+
+  &[data-interactive] {
+    cursor: pointer;
+  }
+
+  &:focus-visible {
+    outline: var(--border-width-thick) solid var(--border-focus);
+    outline-offset: calc(-1 * var(--border-width-thick));
+  }
+}
+
+.header {
+  display: grid;
+  grid-template-columns: var(--data-table-columns);
+  align-items: center;
+  height: var(--row-height-sm);
+  background: var(--bg-subtle);
+  border-bottom: var(--border-width) solid var(--border-default);
+}
+
+.cell {
+  min-width: 0;
+  padding-inline: var(--cell-px);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &[data-numeric] {
+    text-align: right;
+  }
+}
+
+.viewport {
+  composes: viewport from '../../styles/shared/scrollViewport.module.css';
+}
+
+.inner {
+  position: relative;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--cell-px);
+  border-top: var(--border-width) solid var(--border-default);
+  background: var(--bg-subtle);
+}

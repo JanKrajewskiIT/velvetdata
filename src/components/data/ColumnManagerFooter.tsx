@@ -1,5 +1,8 @@
+import { Text } from '@jankrajewskiit/ui/bare';
+
 import { useTranslate } from '../../i18n/useTranslate';
 import type { ColumnManagerController } from './columnManagerController';
+import styles from './ColumnManagerFooter.module.css';
 
 export interface ColumnManagerFooterProps {
   manager: ColumnManagerController;
@@ -16,14 +19,16 @@ export const ColumnManagerFooter = (props: ColumnManagerFooterProps) => {
       : translate('velvetData.columnManager.pinnedCount', { count: pinned });
   };
   return (
-    <div class="vui-colman__foot">
-      <span>
+    <div class={styles.root}>
+      <Text as="span" variant="caption" tone="tertiary" tabular>
         {translate('velvetData.columnManager.visibleCount', {
           visible: visibleCount(),
           total: props.manager.model.state().length,
         })}
-      </span>
-      <span>{pinnedText()}</span>
+      </Text>
+      <Text as="span" variant="caption" tone="tertiary" tabular>
+        {pinnedText()}
+      </Text>
     </div>
   );
 };

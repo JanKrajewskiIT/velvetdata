@@ -1,10 +1,11 @@
-import { Glyph } from '@jankrajewskiit/ui/bare';
-import { cellText, cx, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
+import { IconButton, Text } from '@jankrajewskiit/ui/bare';
+import { cellText, type RowKey, rowValue } from '@jankrajewskiit/ui/common';
 import { type JSX, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import type { DataGridController } from './dataGridController';
 import type { GridColumn } from './dataGridTypes';
+import styles from './GridCell.module.css';
 import { GridCellEditor } from './GridCellEditor';
 
 export interface GridCellProps<T extends object> {
@@ -19,7 +20,6 @@ export interface GridCellProps<T extends object> {
 }
 
 const renderCell = <T extends object>(c: GridColumn<T>, row: T): JSX.Element => {
-  if (c.render) return c.render(row);
   const value = rowValue(row, c.key);
   return c.format ? c.format(value) : cellText(value);
 };
@@ -39,39 +39,55 @@ export const GridCell = <T extends object>(props: GridCellProps<T>) => {
       data-rc={`${props.rowIndex}-${props.colIndex}`}
       tabIndex={active() && !editing() ? 0 : -1}
       aria-readonly={!editable() || undefined}
-      class={cx(
-        'vui-grid__cell',
-        active() && 'vui-grid__cell--on',
-        editing() && 'vui-grid__cell--edit',
-        props.column.type === 'number' && 'vui-grid__num',
-        editable() && 'vui-grid__cell--editable',
-        props.grid.layout.pinClass(props.column),
-      )}
+      class={styles.root}
+      data-active={active() || undefined}
+      data-editing={editing() || undefined}
+      data-numeric={props.column.type === 'number' || undefined}
+      data-pin={props.column.pin}
+      data-pin-edge={props.grid.layout.pinEdge(props.column)}
       style={props.grid.layout.pinStyle(props.column)}
       onClick={() => props.grid.active.setCell({ row: props.rowIndex, col: props.colIndex })}
       onFocus={() => props.grid.active.setCell({ row: props.rowIndex, col: props.colIndex })}
       onDblClick={() => props.grid.active.startEdit(props.rowIndex, props.colIndex)}
     >
       <Show when={props.colIndex === 0 && props.grid.config.renderDetail && !editing()}>
-        <button
-          type="button"
+        <IconButton
+          size="xs"
+          icon="chevron-right"
           tabIndex={-1}
-          class="vui-grid__exp"
-          aria-label={translate(props.open ? 'velvetData.dataGrid.collapseRow' : 'velvetData.dataGrid.expandRow')}
+          class={styles.expander}
+          label={translate(props.open ? 'velvetData.dataGrid.collapseRow' : 'velvetData.dataGrid.expandRow')}
+          aria-expanded={props.open}
           onClick={(e) => {
             e.stopPropagation();
             props.grid.expansion.toggleOpen(props.rowKey);
           }}
-        >
-          <Glyph name="chevron-right" />
-        </button>
+        />
       </Show>
       <Show
         when={editing()}
         fallback={
-          <span class={cx('vui-grid__val', props.column.render && 'vui-grid__val--custom')}>
-            {renderCell(props.column, props.row)}
-          </span>
+          <Show
+            when={props.column.render}
+            keyed
+            fallback={
+              <Text as="div" variant="body-sm" tabular={props.column.type === 'number'} class={styles.value}>
+                {renderCell(props.column, props.row)}
+              </Text>
+            }
+          >
+            {(render) => (
+              <Text
+                as="div"
+                variant="body-sm"
+                tabular={props.column.type === 'number'}
+                class={styles.customValue}
+                data-numeric={props.column.type === 'number' || undefined}
+              >
+                {render(props.row)}
+              </Text>
+            )}
+          </Show>
         }
       >
         <GridCellEditor

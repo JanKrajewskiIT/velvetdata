@@ -2,6 +2,7 @@ import type { RowKey } from '@jankrajewskiit/ui/common';
 import { createEffect, on, onCleanup, onMount } from 'solid-js';
 
 import type { DataGridController } from './dataGridController';
+import styles from './GridMeasuredRow.module.css';
 import { GridRow } from './GridRow';
 
 export interface GridMeasuredRowProps<T extends object> {
@@ -44,7 +45,7 @@ export const GridMeasuredRow = <T extends object>(props: GridMeasuredRowProps<T>
         element = node;
       }}
       role="rowgroup"
-      class="vui-grid__record"
+      class={styles.root}
     >
       <GridRow grid={props.grid} row={props.row} index={props.index} />
     </div>

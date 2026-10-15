@@ -3,7 +3,7 @@ import { For, Show } from 'solid-js';
 
 import { useTranslate } from '../i18n/useTranslate';
 import type { TradingIndicator, TradingViewChartProps } from './tradingTypes';
-import styles from './TradingViewChart.module.css';
+import styles from './TradingViewChartToolbar.module.css';
 
 export interface TradingViewChartToolbarProps {
   readonly symbol: string;
@@ -23,7 +23,7 @@ export interface TradingViewChartToolbarProps {
 export const TradingViewChartToolbar = (props: TradingViewChartToolbarProps) => {
   const translate = useTranslate();
   return (
-    <div class={styles.toolbar}>
+    <div class={styles.root}>
       <Text as="span" variant="title">
         {props.symbol}
       </Text>

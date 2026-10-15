@@ -1,0 +1,8 @@
+.root {
+  composes: line from '../styles/shared/flexLine.module.css';
+  justify-content: space-between;
+}
+
+.controls {
+  composes: line from '../styles/shared/flexLine.module.css';
+}

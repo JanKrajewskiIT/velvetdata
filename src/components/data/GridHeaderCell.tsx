@@ -1,9 +1,10 @@
-import { ColumnResize, Glyph } from '@jankrajewskiit/ui/bare';
-import { columnName, cx, nextSort } from '@jankrajewskiit/ui/common';
+import { ColumnResize, Glyph, Text } from '@jankrajewskiit/ui/bare';
+import { columnName, nextSort } from '@jankrajewskiit/ui/common';
 import { createMemo, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import type { DataGridController } from './dataGridController';
+import styles from './GridHeaderCell.module.css';
 
 export interface GridHeaderCellProps<T extends object> {
   grid: DataGridController<T>;
@@ -20,35 +21,37 @@ export const GridHeaderCell = <T extends object>(props: GridHeaderCellProps<T>) 
         <div
           role="columnheader"
           aria-sort={sorted() ? (props.grid.view.sort()?.dir === 'asc' ? 'ascending' : 'descending') : undefined}
-          class={cx(
-            'vui-grid__hd',
-            current().type === 'number' && 'vui-grid__num',
-            props.grid.layout.pinClass(current()),
-          )}
+          class={styles.root}
+          data-pin={current().pin}
+          data-pin-edge={props.grid.layout.pinEdge(current())}
           style={props.grid.layout.pinStyle(current())}
         >
           <button
             type="button"
             disabled={current().sortable === false}
-            class="vui-grid__hbtn"
+            class={styles.button}
+            data-numeric={current().type === 'number' || undefined}
             onClick={() =>
               current().sortable !== false && props.grid.view.setSort(nextSort(props.grid.view.sort(), props.columnKey))
             }
           >
-            {current().label}
+            <Text as="span" variant="label-sm" class={styles.label}>
+              {current().label}
+            </Text>
             <Show when={current().sortable !== false}>
               <Show
                 when={sorted()}
-                fallback={<Glyph name="chevrons-up-down" class="vui-grid__sort vui-grid__sort--idle" />}
+                fallback={<Glyph name="chevrons-up-down" size="xs" class={styles.sort} data-idle />}
               >
                 <Glyph
                   name={props.grid.view.sort()?.dir === 'asc' ? 'arrow-up' : 'arrow-down'}
-                  class="vui-grid__sort"
+                  size="xs"
+                  class={styles.sort}
                 />
               </Show>
             </Show>
             <Show when={current().editable}>
-              <Glyph name="pencil" class="vui-grid__edit-ic" />
+              <Glyph name="pencil" size="xs" class={styles.editIcon} />
             </Show>
           </button>
           <ColumnResize

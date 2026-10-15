@@ -1,0 +1,18 @@
+.root {
+  --overlay-min-w: min(var(--overlay-w-sm), calc(100vw - 2 * var(--viewport-margin)));
+  --overlay-w: var(--overlay-w-sm);
+}
+
+.wide {
+  --overlay-min-w: min(var(--overlay-w-lg), calc(100vw - 2 * var(--viewport-margin)));
+  --overlay-w: var(--overlay-w-lg);
+}
+
+.body {
+  max-height: min(
+    var(--overlay-max-h-lg),
+    calc(100dvh - 2 * var(--viewport-margin) - 2 * var(--space-4) - var(--control-height-md))
+  );
+  overflow: auto;
+  min-width: 0;
+}

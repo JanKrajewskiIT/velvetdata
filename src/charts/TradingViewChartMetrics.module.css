@@ -1,0 +1,14 @@
+.root {
+  composes: line from '../styles/shared/flexLine.module.css';
+  justify-content: space-between;
+}
+
+.values {
+  composes: line from '../styles/shared/flexLine.module.css';
+  margin: 0;
+  gap: var(--space-4);
+}
+
+.value {
+  margin: 0;
+}

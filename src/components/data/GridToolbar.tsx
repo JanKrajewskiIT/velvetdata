@@ -1,13 +1,15 @@
-import { Button, Count, Popover, SearchInput } from '@jankrajewskiit/ui/bare';
+import { Button, Count, SearchInput } from '@jankrajewskiit/ui/bare';
 import { Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import { QueryBuilder } from '../patterns/QueryBuilder';
 import { ColumnManager } from './ColumnManager';
 import type { DataGridController } from './dataGridController';
+import { DataPopover } from './DataPopover';
 import { initialColumnState } from './gridColumns';
 import { exportGridRows } from './gridExport';
 import { GridSelectedCount } from './GridSelectedCount';
+import styles from './GridToolbar.module.css';
 import { GridViewSettings } from './GridViewSettings';
 
 export interface GridToolbarProps<T extends object> {
@@ -46,14 +48,14 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
 
   return (
     <Show when={hasToolbar()}>
-      <div class="vui-dgrid__bar">
+      <div class={styles.root}>
         <Show
           when={props.grid.config.selectable && props.grid.selection.selectedKeys().length > 0}
           fallback={
             <Show when={props.grid.config.searchable}>
               <SearchInput
                 size="sm"
-                class="vui-dgrid__search"
+                class={styles.search}
                 aria-label={translate('velvetData.dataGrid.searchLabel')}
                 placeholder={
                   props.grid.config.searchPlaceholder ??
@@ -65,10 +67,8 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
             </Show>
           }
         >
-          <div class="vui-dgrid__bulk">
-            <span class="vui-dgrid__bulk-n">
-              <GridSelectedCount count={props.grid.selection.selectedKeys().length} />
-            </span>
+          <div class={styles.bulk}>
+            <GridSelectedCount count={props.grid.selection.selectedKeys().length} />
             <Button size="sm" variant="ghost" onClick={props.grid.selection.clear}>
               {translate('velvet.common.clear')}
             </Button>
@@ -79,18 +79,17 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
             })}
           </div>
         </Show>
-        <div class="vui-dgrid__tools">
+        <div class={styles.tools}>
           <Show when={props.grid.config.filterFields}>
             {(fields) => (
-              <Popover
-                class="vui-dgrid__pop vui-dgrid__pop--wide"
-                align="end"
+              <DataPopover
+                size="lg"
                 title={translate('velvetData.dataGrid.filters')}
                 trigger={
                   <Button size="sm" variant="secondary" iconLeft="filter">
                     {translate('velvetData.dataGrid.filters')}
                     <Show when={props.grid.view.activeFilters() > 0}>
-                      <Count value={props.grid.view.activeFilters()} size="sm" class="vui-dgrid__count" />
+                      <Count value={props.grid.view.activeFilters()} size="sm" class={styles.count} />
                     </Show>
                   </Button>
                 }
@@ -102,7 +101,7 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
                   clearable
                 />
                 <Show when={props.grid.view.activeFilters() > 0}>
-                  <div class="vui-dgrid__popfoot">
+                  <div class={styles.filterFooter}>
                     <Button
                       size="sm"
                       variant="ghost"
@@ -112,13 +111,12 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
                     </Button>
                   </div>
                 </Show>
-              </Popover>
+              </DataPopover>
             )}
           </Show>
           <Show when={props.grid.config.columnManager}>
-            <Popover
-              class="vui-dgrid__pop"
-              align="end"
+            <DataPopover
+              label={translate('velvetData.dataGrid.columns')}
               trigger={
                 <Button size="sm" variant="secondary" iconLeft="sliders">
                   {translate('velvetData.dataGrid.columns')}
@@ -133,7 +131,7 @@ export const GridToolbar = <T extends object>(props: GridToolbarProps<T>) => {
                 minVisible={1}
                 onValueChange={props.grid.view.setColumnState}
               />
-            </Popover>
+            </DataPopover>
           </Show>
           <Show when={props.grid.config.onExport !== undefined}>
             <Button

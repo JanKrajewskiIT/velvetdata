@@ -1,8 +1,9 @@
-import { SectionLabel } from '@jankrajewskiit/ui/bare';
+import { SectionLabel, Text } from '@jankrajewskiit/ui/bare';
 import { createControllable, cx } from '@jankrajewskiit/ui/common';
 import { mergeProps, Show, untrack } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
+import styles from './QueryBuilder.module.css';
 import { QueryGroupEditor } from './QueryGroupEditor';
 import { clearQuery, describeQuery, emptyQuery, type QueryField, type QueryGroup } from './queryModel';
 
@@ -44,7 +45,7 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
   });
 
   return (
-    <div class={cx('vui-qb', p.disabled && 'vui-qb--disabled', p.class)} aria-disabled={p.disabled || undefined}>
+    <div class={cx(styles.root, p.class)} aria-disabled={p.disabled || undefined}>
       <QueryGroupEditor
         group={query()}
         fields={p.fields}
@@ -65,9 +66,11 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
         }}
       />
       <Show when={p.showSummary}>
-        <div class="vui-qb__summary">
+        <div class={styles.summary}>
           <SectionLabel as="span">{translate('velvetData.queryBuilder.query')}</SectionLabel>
-          <code>{describeQuery(query(), p.fields, translate)}</code>
+          <Text as="code" variant="code" tone="primary" class={styles.description}>
+            {describeQuery(query(), p.fields, translate)}
+          </Text>
         </div>
       </Show>
     </div>

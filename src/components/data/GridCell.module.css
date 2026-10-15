@@ -1,0 +1,54 @@
+.root {
+  composes: cell from '../../styles/shared/gridSurface.module.css';
+  outline: none;
+  cursor: cell;
+
+  &[data-active] {
+    box-shadow: var(--focus-ring-inset);
+  }
+
+  &[data-editing] {
+    padding: 0;
+    box-shadow: var(--focus-ring-inset);
+    overflow: visible;
+    z-index: var(--z-dropdown);
+  }
+
+  &[data-numeric] {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  &:focus-visible {
+    outline: var(--border-width-thick) solid var(--border-focus);
+    outline-offset: calc(-1 * var(--border-width-thick));
+  }
+}
+
+.value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customValue {
+  composes: value;
+  display: flex;
+  align-items: center;
+
+  &[data-numeric] {
+    justify-content: flex-end;
+  }
+}
+
+.expander {
+  flex: none;
+  margin-inline: calc(-1 * var(--space-1)) var(--space-1);
+  transition: transform var(--motion-fast);
+
+  &[aria-expanded='true'] {
+    transform: rotate(90deg);
+  }
+}

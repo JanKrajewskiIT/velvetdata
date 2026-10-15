@@ -1,7 +1,9 @@
 {
   "extends": "@jankrajewskiit/configs/tsconfig/node-vite",
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo"
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "css-modules.config.mjs"]
 }

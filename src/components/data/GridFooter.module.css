@@ -1,0 +1,18 @@
+.root {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  min-height: var(--row-height-sm);
+  padding: var(--space-2) var(--space-4);
+  border-top: var(--border-width) solid var(--border-default);
+}
+
+.count {
+  flex: none;
+  white-space: nowrap;
+}
+
+.end {
+  margin-inline-start: auto;
+}

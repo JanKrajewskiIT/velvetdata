@@ -1,0 +1,6 @@
+.row {
+  display: grid;
+  grid-template-columns: var(--grid-tpl);
+  width: max-content;
+  min-width: 100%;
+}

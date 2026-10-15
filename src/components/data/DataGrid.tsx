@@ -1,4 +1,4 @@
-import { Button } from '@jankrajewskiit/ui/bare';
+import { Button, Text } from '@jankrajewskiit/ui/bare';
 import { createRowIdentity, cx, type RowKey } from '@jankrajewskiit/ui/common';
 import { createEffect, createMemo, createSignal, type JSX, mergeProps, onCleanup, Show } from 'solid-js';
 
@@ -11,6 +11,7 @@ import { createGridSelection } from './createGridSelection';
 import { createGridView } from './createGridView';
 import { createGridWindow, type GridWindow } from './createGridWindow';
 import { createVirtualKeys } from './createVirtualKeys';
+import styles from './DataGrid.module.css';
 import type { DataGridController } from './dataGridController';
 import type { DataGridProps } from './dataGridTypes';
 import { GridBody } from './GridBody';
@@ -144,11 +145,13 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
   });
 
   return (
-    <div class={cx('vui-dgrid', p.class)}>
+    <div class={cx(styles.root, p.class)}>
       <GridToolbar grid={grid} />
       <Show when={p.error}>
-        <div role="alert" class="vui-dgrid__view-error">
-          {p.error}
+        <div role="alert" class={styles.message}>
+          <Text as="div" variant="body-sm" tone="danger">
+            {p.error}
+          </Text>
           <Show when={p.onRetry}>
             <Button size="xs" onClick={() => p.onRetry?.()}>
               {translate('velvetData.dataGrid.retry')}
@@ -157,8 +160,10 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
         </div>
       </Show>
       <Show when={view.error()}>
-        <div role="status" class="vui-dgrid__view-error">
-          {translate('velvetData.dataGrid.viewError')}
+        <div role="status" class={styles.message}>
+          <Text as="span" variant="body-sm" tone="danger">
+            {translate('velvetData.dataGrid.viewError')}
+          </Text>
           <Button size="xs" variant="ghost" onClick={view.reset}>
             {translate('velvetData.dataGrid.resetView')}
           </Button>
@@ -173,10 +178,13 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
         aria-colcount={view.cols().length + (p.selectable ? 1 : 0)}
         aria-multiselectable={p.selectable || undefined}
         aria-busy={p.loading || undefined}
-        class={cx('vui-grid', scrolled() && 'vui-grid--scrolled', scrolledRight() && 'vui-grid--scrolled-right')}
+        class={styles.viewport}
+        data-scrolled-start={scrolled() || undefined}
+        data-scrolled-end={scrolledRight() || undefined}
         style={{
           height: `${p.height}px`,
           '--grid-tpl': layout.template(),
+          '--data-grid-leading-width': `${layout.leadWidth()}px`,
           '--grid-row-height': p.rowHeight === undefined ? undefined : `${window.rowHeight()}px`,
         }}
         onKeyDown={onKey}
@@ -190,9 +198,9 @@ export const DataGrid = <T extends object>(props: DataGridProps<T>): JSX.Element
       >
         <GridHeader grid={grid} />
         <Show when={p.loading}>
-          <div role="status" class="vui-grid__empty">
+          <Text as="div" variant="body-sm" tone="tertiary" role="status" class={styles.loading}>
             {translate('velvetData.dataGrid.loading')}
-          </div>
+          </Text>
         </Show>
         <Show when={!p.loading && !p.error && view.rows().length === 0}>
           <GridEmpty grid={grid} />

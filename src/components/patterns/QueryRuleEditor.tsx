@@ -3,6 +3,7 @@ import { Match, Switch } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import { operatorsFor, type QueryField, type QueryRule, VALUELESS_OPS, withField } from './queryModel';
+import styles from './QueryRuleEditor.module.css';
 import { queryRuleIssue } from './queryValidation';
 
 export interface QueryRuleEditorProps {
@@ -25,8 +26,8 @@ export const QueryRuleEditor = (props: QueryRuleEditorProps) => {
   };
 
   return (
-    <div class="vui-qb__rule">
-      <div class="vui-qb__field">
+    <div class={styles.root}>
+      <div class={styles.field}>
         <Select
           size="sm"
           disabled={props.disabled}
@@ -36,7 +37,7 @@ export const QueryRuleEditor = (props: QueryRuleEditorProps) => {
           onValueChange={(key) => props.onChange(withField(props.rule, props.fields, key))}
         />
       </div>
-      <div class="vui-qb__op">
+      <div class={styles.operator}>
         <Select
           size="sm"
           disabled={props.disabled || !operatorsFor(field(), translate).length}
@@ -48,10 +49,10 @@ export const QueryRuleEditor = (props: QueryRuleEditorProps) => {
       </div>
       <Switch>
         <Match when={VALUELESS_OPS.includes(props.rule.op)}>
-          <span class="vui-qb__value" />
+          <span class={styles.value} />
         </Match>
         <Match when={field()?.type === 'select'}>
-          <div class="vui-qb__value">
+          <div class={styles.value}>
             <Select
               size="sm"
               disabled={props.disabled}
@@ -67,7 +68,7 @@ export const QueryRuleEditor = (props: QueryRuleEditorProps) => {
           </div>
         </Match>
         <Match when={true}>
-          <div class="vui-qb__value">
+          <div class={styles.value}>
             <Input
               size="sm"
               disabled={props.disabled}
@@ -84,6 +85,7 @@ export const QueryRuleEditor = (props: QueryRuleEditorProps) => {
         </Match>
       </Switch>
       <CloseButton
+        class={styles.remove}
         label={translate('velvetData.queryBuilder.removeCondition')}
         disabled={props.disabled || !props.canRemove}
         onClick={() => props.onRemove()}

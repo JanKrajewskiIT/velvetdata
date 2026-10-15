@@ -1,0 +1,5 @@
+.root {
+  position: sticky;
+  inset-inline-start: 0;
+  padding: var(--space-10) var(--space-4);
+}

@@ -1,0 +1,8 @@
+.root {
+  composes: leading from '../../styles/shared/gridSurface.module.css';
+
+  &[data-header] {
+    z-index: 4;
+    background: var(--bg-subtle);
+  }
+}

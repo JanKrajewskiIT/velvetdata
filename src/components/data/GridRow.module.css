@@ -1,0 +1,39 @@
+.row {
+  composes: row from '../../styles/shared/gridRow.module.css';
+
+  &:hover {
+    --data-grid-cell-bg: var(--table-row-hover);
+    --data-grid-leading-bg: var(--table-row-hover);
+  }
+
+  &[data-current] {
+    --data-grid-leading-bg: var(--bg-selected);
+    --data-grid-leading-fg: var(--fg-brand);
+  }
+
+  &[aria-selected='true'] {
+    --data-grid-cell-bg: var(--table-row-selected);
+    --data-grid-leading-bg: var(--table-row-selected);
+    --data-grid-leading-fg: var(--fg-brand);
+  }
+}
+
+.detailRow {
+  width: max-content;
+  min-width: 100%;
+}
+
+.detail {
+  border-bottom: var(--border-width) solid var(--border-subtle);
+  background: var(--bg-subtle);
+}
+
+.detailContent {
+  composes: enter from '../../styles/shared/reveal.module.css';
+  position: sticky;
+  inset-inline-start: 0;
+  box-sizing: border-box;
+  max-width: var(--container-md);
+  padding: var(--space-3-5) var(--space-4) var(--space-4);
+  padding-inline-start: calc(var(--data-grid-leading-width) + var(--space-8) + var(--space-1));
+}

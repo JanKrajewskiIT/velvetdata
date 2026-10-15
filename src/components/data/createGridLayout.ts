@@ -1,4 +1,3 @@
-import { cx } from '@jankrajewskiit/ui/common';
 import { type Accessor, createMemo, type JSX } from 'solid-js';
 
 import type { GridColumn } from './dataGridTypes';
@@ -19,7 +18,7 @@ export interface GridLayout<T extends object> {
   /** Width of the row-number and checkbox columns. */
   leadWidth: () => number;
   template: () => string;
-  pinClass: (c: GridColumn<T>) => string | false;
+  pinEdge: (c: GridColumn<T>) => 'start' | 'end' | undefined;
   pinStyle: (c: GridColumn<T>) => JSX.CSSProperties | undefined;
   checkLeft: () => JSX.CSSProperties;
 }
@@ -62,11 +61,11 @@ export const createGridLayout = <T extends object>(options: GridLayoutOptions<T>
     });
     return { offsets, first };
   });
-  const pinClass = (c: GridColumn<T>) =>
-    c.pin === 'left'
-      ? cx('vui-grid__pin', c.key === pinLeft().last && 'vui-grid__pin--last')
-      : c.pin === 'right' &&
-        cx('vui-grid__pin', 'vui-grid__pin--right', c.key === pinRight().first && 'vui-grid__pin--first');
+  const pinEdge = (c: GridColumn<T>) => {
+    if (c.pin === 'left' && c.key === pinLeft().last) return 'start';
+    if (c.pin === 'right' && c.key === pinRight().first) return 'end';
+    return undefined;
+  };
   const pinStyle = (c: GridColumn<T>): JSX.CSSProperties | undefined =>
     c.pin === 'left'
       ? { left: `${pinLeft().offsets.get(c.key) ?? 0}px` }
@@ -75,5 +74,5 @@ export const createGridLayout = <T extends object>(options: GridLayoutOptions<T>
         : undefined;
   const checkLeft = (): JSX.CSSProperties => ({ left: `${options.rowNumbers() ? ROW_NUMBER_WIDTH : 0}px` });
 
-  return { widths, setWidth, leadWidth, template, pinClass, pinStyle, checkLeft };
+  return { widths, setWidth, leadWidth, template, pinEdge, pinStyle, checkLeft };
 };

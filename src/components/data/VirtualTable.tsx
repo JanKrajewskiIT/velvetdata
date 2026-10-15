@@ -1,4 +1,5 @@
 import { useI18n } from '@jankrajewskiit/i18n';
+import { Text } from '@jankrajewskiit/ui/bare';
 import {
   cellText,
   clamp,
@@ -15,6 +16,7 @@ import { createVirtualKeys } from './createVirtualKeys';
 import { createVirtualRecord } from './createVirtualRecord';
 import { DEFAULT_VIEWPORT_HEIGHT, nonnegativeInteger, positiveSize } from './virtualDimensions';
 import { isRowControl } from './virtualRowTarget';
+import styles from './VirtualTable.module.css';
 
 export interface VirtualColumn<T extends object = object> {
   key: string;
@@ -124,18 +126,29 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
     }
   };
 
-  const cellClass = (c: VirtualColumn<T>) => cx('vui-vtable__cell', c.align === 'right' && 'vui-table__num');
   const visibleRange = () =>
     `${i18n.formatNumber(count() ? firstVisible() + 1 : 0)}–${i18n.formatNumber(Math.min(count(), Math.ceil((scrollTop() + height()) / rowHeight())))}`;
 
   return (
-    <div class={cx('vui-vtable', p.class)} role="table" aria-rowcount={count() + 1}>
-      <div role="row" class="vui-vtable__row vui-vtable__row--head" style={{ 'grid-template-columns': template() }}>
+    <div
+      class={cx(styles.root, p.class)}
+      role="table"
+      aria-rowcount={count() + 1}
+      style={{ '--data-table-columns': template() }}
+    >
+      <div role="row" class={styles.header}>
         <For each={p.columns}>
           {(c) => (
-            <div role="columnheader" class={cellClass(c)}>
+            <Text
+              as="div"
+              variant="label-sm"
+              tone="secondary"
+              role="columnheader"
+              class={styles.cell}
+              data-numeric={c.align === 'right' || undefined}
+            >
               {c.label}
-            </div>
+            </Text>
           )}
         </For>
       </div>
@@ -144,11 +157,10 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
         ref={(element) => {
           body = element;
         }}
-        class="vui-vtable__body"
+        class={styles.viewport}
         style={{ height: `${height()}px` }}
         role="rowgroup"
         aria-label={translate('velvetData.virtualTable.rowsCount', { count: count() })}
-
         tabIndex={focus() < 0 ? 0 : -1}
         onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
         onKeyDown={onKey}
@@ -160,7 +172,7 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
           if (e.target === e.currentTarget && focus() < 0) goTo(firstVisible());
         }}
       >
-        <div style={{ height: `${count() * rowHeight()}px`, position: 'relative' }}>
+        <div class={styles.inner} style={{ height: `${count() * rowHeight()}px` }}>
           <For each={visibleKeys()}>
             {(key) => {
               const i = () => keys.indexOf(key);
@@ -173,13 +185,10 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
                   role="row"
                   aria-rowindex={i() + 2}
                   tabIndex={i() === focus() ? 0 : -1}
-                  class={cx(
-                    'vui-vtable__row',
-                    i() === focus() && 'vui-vtable__row--focus',
-                    p.onRowClick && 'vui-vtable__row--click',
-                  )}
+                  class={styles.row}
+                  data-focused={i() === focus() || undefined}
+                  data-interactive={!!p.onRowClick || undefined}
                   style={{
-                    'grid-template-columns': template(),
                     height: `${rowHeight()}px`,
                     transform: `translateY(${i() * rowHeight()}px)`,
                   }}
@@ -192,7 +201,14 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
                 >
                   <For each={p.columns}>
                     {(c) => (
-                      <div role="cell" class={cellClass(c)}>
+                      <Text
+                        as="div"
+                        variant="body-sm"
+                        tabular={c.align === 'right'}
+                        role="cell"
+                        class={styles.cell}
+                        data-numeric={c.align === 'right' || undefined}
+                      >
                         <Show when={record()} keyed>
                           {(entry) => (
                             <Show when={c.render} keyed fallback={cellText(rowValue(entry.item, c.key))}>
@@ -200,7 +216,7 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
                             </Show>
                           )}
                         </Show>
-                      </div>
+                      </Text>
                     )}
                   </For>
                 </div>
@@ -209,14 +225,16 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
           </For>
         </div>
       </div>
-      <div class="vui-vtable__foot">
-        <span>{translate('velvetData.virtualTable.rowsCount', { count: count() })}</span>
-        <span>
+      <div class={styles.footer}>
+        <Text as="span" variant="micro" mono tabular tone="tertiary">
+          {translate('velvetData.virtualTable.rowsCount', { count: count() })}
+        </Text>
+        <Text as="span" variant="micro" mono tabular tone="tertiary">
           {translate('velvetData.virtualTable.rendering', {
             count: Math.max(0, end() - start()),
             range: visibleRange(),
           })}
-        </span>
+        </Text>
       </div>
     </div>
   );

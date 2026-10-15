@@ -1,6 +1,7 @@
 import { createEffect, For, type JSX, Show } from 'solid-js';
 
 import type { GridEditorContext } from './gridEditorTypes';
+import styles from './GridNativeEditor.module.css';
 
 export interface GridNativeEditorProps<T extends object> {
   context: GridEditorContext<T>;
@@ -36,7 +37,7 @@ export const GridNativeEditor = <T extends object>(props: GridNativeEditorProps<
     }
   };
   const attributes = {
-    class: 'vui-grid__input',
+    class: styles.control,
     get value() {
       return props.context.draft;
     },

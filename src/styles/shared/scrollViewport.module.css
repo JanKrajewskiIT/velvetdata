@@ -1,0 +1,11 @@
+.viewport {
+  position: relative;
+  overflow-y: auto;
+  outline: none;
+  overscroll-behavior: contain;
+
+  &:focus-visible {
+    outline: var(--border-width-thick) solid var(--border-focus);
+    outline-offset: calc(-1 * var(--border-width-thick));
+  }
+}

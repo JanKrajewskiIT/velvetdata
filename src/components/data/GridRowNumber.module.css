@@ -1,0 +1,10 @@
+.root {
+  composes: leading from '../../styles/shared/gridSurface.module.css';
+  inset-inline-start: 0;
+  background: var(--data-grid-leading-bg, var(--bg-subtle));
+  color: var(--data-grid-leading-fg, var(--fg-tertiary));
+
+  &[data-header] {
+    z-index: 4;
+  }
+}

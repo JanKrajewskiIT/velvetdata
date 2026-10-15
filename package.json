@@ -44,7 +44,7 @@
   ],
   "scripts": {
     "prepublishOnly": "npm run verify",
-    "build": "tsc -b && vite build && configs-package-styles",
+    "build": "tsc -b && vite build && node scripts/packageStyles.mjs",
     "typecheck": "tsc -b",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix --max-warnings 0",
@@ -70,7 +70,7 @@
   },
   "peerDependencies": {
     "@jankrajewskiit/i18n": ">=3.4.4 <4",
-    "@jankrajewskiit/ui": ">=3.6.1 <4",
+    "@jankrajewskiit/ui": ">=3.7.2 <4",
     "lightweight-charts": ">=5.1.0 <6",
     "solid-js": ">=1.9.0 <2"
   },
@@ -83,7 +83,7 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@jankrajewskiit/configs": "^3.7.0",
     "@jankrajewskiit/i18n": "^3.7.0",
-    "@jankrajewskiit/ui": "^3.7.0",
+    "@jankrajewskiit/ui": "^3.7.2",
     "@size-limit/file": "^14.2.0",
     "@types/node": "^26.6.5",
     "@typescript/native": "npm:typescript@^7.0.2",

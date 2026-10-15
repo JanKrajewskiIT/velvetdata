@@ -1,4 +1,4 @@
-import { Button, EmptyText } from '@jankrajewskiit/ui/bare';
+import { Button, EmptyText, Spinner, Text } from '@jankrajewskiit/ui/bare';
 import { cx, INTERACTIVE_SELECTOR } from '@jankrajewskiit/ui/common';
 import { createEffect, createMemo, createSignal, For, type JSX, mergeProps, onCleanup, Show } from 'solid-js';
 
@@ -9,6 +9,7 @@ import { createVirtualRows, DEFAULT_ITEM_HEIGHT, DEFAULT_OVERSCAN } from './crea
 import { createVirtualScroll } from './createVirtualScroll';
 import { createVirtualSelection } from './createVirtualSelection';
 import { DEFAULT_VIEWPORT_HEIGHT } from './virtualDimensions';
+import styles from './VirtualList.module.css';
 import type { VirtualListConfig, VirtualListItemState, VirtualListProps } from './virtualListTypes';
 import { isRowControl } from './virtualRowTarget';
 
@@ -73,10 +74,10 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
   });
 
   return (
-    <div class={cx('vui-vlist', p.divided && 'vui-vlist--divided', p.class)}>
+    <div class={cx(styles.root, p.class)} style={{ '--data-list-loading-height': `${LOADING_ROW_HEIGHT}px` }}>
       <div
         ref={setBox}
-        class="vui-vlist__scroll"
+        class={styles.viewport}
         style={{ height: `${height()}px` }}
         role={interaction()}
         aria-label={label()}
@@ -100,9 +101,9 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
       >
         <Show
           when={count() > 0 || loading() || p.error || scrolling.failed()}
-          fallback={<EmptyText class="vui-vlist__empty">{empty()}</EmptyText>}
+          fallback={<EmptyText class={styles.empty}>{empty()}</EmptyText>}
         >
-          <div class="vui-vlist__inner" style={{ height: `${total() + (loading() ? LOADING_ROW_HEIGHT : 0)}px` }}>
+          <div class={styles.inner} style={{ height: `${total() + (loading() ? LOADING_ROW_HEIGHT : 0)}px` }}>
             <For each={visibleKeys()}>
               {(key) => {
                 const i = () => keys.indexOf(key);
@@ -126,12 +127,10 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
                     aria-posinset={interaction() === 'grid' ? undefined : i() + 1}
                     aria-rowindex={interaction() === 'grid' ? i() + 1 : undefined}
                     tabIndex={i() === focus() ? 0 : -1}
-                    class={cx(
-                      'vui-vlist__item',
-                      i() === focus() && 'vui-vlist__item--focus',
-                      selected() && 'vui-vlist__item--selected',
-                      (p.onSelect || p.onActivate) && 'vui-vlist__item--click',
-                    )}
+                    class={styles.item}
+                    data-divided={p.divided || undefined}
+                    data-selected={selected() || undefined}
+                    data-interactive={!!(p.onSelect || p.onActivate) || undefined}
                     style={{ top: `${offsetAt(i())}px`, height: `${offsetAt(i() + 1) - offsetAt(i()) - gap()}px` }}
                     onClick={(event) => {
                       if (isRowControl(event.target)) return;
@@ -143,12 +142,11 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
                       p.onActivate?.(item, index);
                     }}
                   >
-                    <div
+                    <Text
+                      as="div"
+                      variant="body-sm"
+                      class={styles.content}
                       role={interaction() === 'grid' ? 'gridcell' : 'presentation'}
-                      style={{
-                        display: interaction() === 'grid' ? 'block' : 'contents',
-                        height: interaction() === 'grid' ? '100%' : undefined,
-                      }}
                     >
                       <Show when={record()} keyed>
                         {(entry) => (
@@ -157,23 +155,27 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
                           </Show>
                         )}
                       </Show>
-                    </div>
+                    </Text>
                   </div>
                 );
               }}
             </For>
             <Show when={loading()}>
-              <div class="vui-vlist__loading" style={{ top: `${total()}px` }} role="status">
-                <span class="vui-loader vui-loader--ring vui-loader--sm" aria-hidden="true" />
-                {loadingLabel()}
+              <div class={styles.loading} style={{ top: `${total()}px` }}>
+                <Spinner size="sm" label={loadingLabel()} />
+                <Text as="span" variant="body-sm" tone="tertiary" aria-hidden="true">
+                  {loadingLabel()}
+                </Text>
               </div>
             </Show>
           </div>
         </Show>
       </div>
       <Show when={p.error || scrolling.failed()}>
-        <div role="alert" class="vui-vlist__error">
-          {p.error ?? translate('velvetData.virtualList.loadError')}
+        <div role="alert" class={styles.error}>
+          <Text as="div" variant="body-sm" tone="danger">
+            {p.error ?? translate('velvetData.virtualList.loadError')}
+          </Text>
           <Button
             size="xs"
             disabled={!!p.error && !p.onRetry}

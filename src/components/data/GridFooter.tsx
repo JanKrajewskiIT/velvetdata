@@ -1,7 +1,9 @@
+import { Text } from '@jankrajewskiit/ui/bare';
 import { Show } from 'solid-js';
 
 import { useTranslateRich } from '../../i18n/useTranslate';
 import type { DataGridController } from './dataGridController';
+import styles from './GridFooter.module.css';
 import { GridSelectedCount } from './GridSelectedCount';
 
 export interface GridFooterProps<T extends object> {
@@ -13,21 +15,25 @@ export const GridFooter = <T extends object>(props: GridFooterProps<T>) => {
   const translateRich = useTranslateRich();
   return (
     <Show when={props.grid.config.footer}>
-      <div class="vui-dgrid__foot">
-        <span aria-live="polite">
+      <div class={styles.root}>
+        <Text as="span" variant="caption" tone="tertiary" tabular class={styles.count} aria-live="polite">
           {translateRich('velvetData.dataGrid.showing', {
             shown: props.grid.view.rows().length,
             total: props.grid.config.rowCount ?? props.grid.config.rows.length,
-            b: (children) => <b>{children}</b>,
+            b: (children) => (
+              <Text as="b" variant="label-sm" tone="primary" tabular>
+                {children}
+              </Text>
+            ),
           })}
-        </span>
+        </Text>
         <Show when={props.grid.config.selectable && props.grid.selection.selectedKeys().length > 0}>
-          <span>
-            <GridSelectedCount count={props.grid.selection.selectedKeys().length} />
-          </span>
+          <GridSelectedCount count={props.grid.selection.selectedKeys().length} variant="caption" tone="primary" />
         </Show>
         <Show when={typeof props.grid.config.footer !== 'boolean'}>
-          <span class="vui-dgrid__foot-end">{props.grid.config.footer}</span>
+          <Text as="div" variant="caption" tone="tertiary" class={styles.end}>
+            {props.grid.config.footer}
+          </Text>
         </Show>
       </div>
     </Show>

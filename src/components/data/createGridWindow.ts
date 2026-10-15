@@ -54,7 +54,7 @@ export const createGridWindow = <T extends object>(options: GridWindowOptions<T>
     if (!element) return;
     setScroll(element.scrollTop);
     setHeight(element.clientHeight);
-    setHeader(element.querySelector<HTMLElement>('.vui-grid__row--head')?.offsetHeight ?? rowHeight());
+    setHeader(element.querySelector<HTMLElement>('[data-grid-header]')?.offsetHeight ?? rowHeight());
   };
   createEffect(() => {
     const element = options.viewport();

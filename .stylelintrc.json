@@ -1,10 +1,3 @@
 {
-  "extends": "@jankrajewskiit/configs/stylelint",
-  "ignoreFiles": ["src/styles/styles.css", "src/styles/components/**"],
-  "overrides": [
-    {
-      "files": ["src/styles/extensions/**/*.css"],
-      "extends": "@jankrajewskiit/configs/stylelint/velvet"
-    }
-  ]
+  "extends": "@jankrajewskiit/configs/stylelint"
 }

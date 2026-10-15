@@ -1,10 +1,10 @@
 import { useI18n } from '@jankrajewskiit/i18n';
-import { Table, type TableColumn } from '@jankrajewskiit/ui/bare';
+import { Table, type TableColumn, Text } from '@jankrajewskiit/ui/bare';
 import { createMemo } from 'solid-js';
 
 import { useTranslate } from '../i18n/useTranslate';
 import type { TradingViewChartPoint } from './tradingTypes';
-import styles from './TradingViewChart.module.css';
+import styles from './TradingViewChartData.module.css';
 
 export interface TradingViewChartDataProps {
   readonly data: readonly TradingViewChartPoint[];
@@ -58,7 +58,9 @@ export const TradingViewChartData = (props: TradingViewChartDataProps) => {
   ]);
   return (
     <details>
-      <summary class={styles.summary}>{translate('velvetData.trading.showData')}</summary>
+      <Text as="summary" variant="body-sm" tone="secondary" class={styles.summary}>
+        {translate('velvetData.trading.showData')}
+      </Text>
       <Table columns={columns()} rows={[...props.data]} rowKey="time" maxHeight={240} />
     </details>
   );

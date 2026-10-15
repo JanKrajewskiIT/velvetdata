@@ -2,6 +2,7 @@ import { EmptyText } from '@jankrajewskiit/ui/bare';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import type { DataGridController } from './dataGridController';
+import styles from './GridEmpty.module.css';
 
 export interface GridEmptyProps<T extends object> {
   grid: DataGridController<T>;
@@ -18,5 +19,5 @@ export const GridEmpty = <T extends object>(props: GridEmptyProps<T>) => {
     if (count) return translate('velvetData.dataGrid.noRowsFilters', { count });
     return translate('velvetData.dataGrid.noRows');
   };
-  return <EmptyText class="vui-grid__empty">{message()}</EmptyText>;
+  return <EmptyText class={styles.root}>{message()}</EmptyText>;
 };

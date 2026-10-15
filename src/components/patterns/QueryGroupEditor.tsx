@@ -1,8 +1,8 @@
-import { Button, IconButton } from '@jankrajewskiit/ui/bare';
-import { cx } from '@jankrajewskiit/ui/common';
+import { Button, IconButton, Text } from '@jankrajewskiit/ui/bare';
 import { createMemo, For, Match, Show, Switch } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
+import styles from './QueryGroupEditor.module.css';
 import {
   combinatorLabel,
   isQueryGroup,
@@ -58,31 +58,41 @@ export const QueryGroupEditor = (props: QueryGroupEditorProps) => {
 
   return (
     <div
-      class={cx('vui-qb__group', props.depth > 0 && 'vui-qb__group--nested')}
+      class={styles.root}
+      data-nested={props.depth > 0 || undefined}
       role="group"
       aria-label={translate(
         props.depth ? 'velvetData.queryBuilder.conditionGroup' : 'velvetData.queryBuilder.conditions',
       )}
     >
       <Show when={props.group.rules.length === 0}>
-        <div class="vui-qb__empty">{translate('velvetData.queryBuilder.empty')}</div>
+        <Text as="div" variant="body-sm" tone="tertiary" class={styles.empty}>
+          {translate('velvetData.queryBuilder.empty')}
+        </Text>
       </Show>
       <For each={ids()}>
         {(id, position) => (
           <Show when={props.group.rules.find((node) => node.id === id)}>
             {(node) => (
-              <div class={cx('vui-qb__row', props.reorderable && 'vui-qb__row--move')}>
-                <div class="vui-qb__lead">
-                  <Switch fallback={<span>{combinatorLabel(combinator(), translate)}</span>}>
+              <div class={styles.row} data-reorderable={props.reorderable || undefined}>
+                <div class={styles.lead}>
+                  <Switch
+                    fallback={
+                      <Text as="span" variant="label" tone="tertiary">
+                        {combinatorLabel(combinator(), translate)}
+                      </Text>
+                    }
+                  >
                     <Match when={position() === 0}>
-                      <span>{translate('velvetData.queryBuilder.where')}</span>
+                      <Text as="span" variant="label" tone="tertiary">
+                        {translate('velvetData.queryBuilder.where')}
+                      </Text>
                     </Match>
                     <Match when={position() === 1}>
                       <Button
-                        variant="secondary"
+                        variant="soft"
                         size="xs"
                         iconRight="chevrons-up-down"
-                        class="vui-qb__comb"
                         disabled={props.disabled}
                         aria-label={translate(
                           combinator() === 'and'
@@ -125,7 +135,7 @@ export const QueryGroupEditor = (props: QueryGroupEditorProps) => {
                   </Match>
                 </Switch>
                 <Show when={props.reorderable}>
-                  <div class="vui-qb__move">
+                  <div class={styles.move}>
                     <IconButton
                       size="xs"
                       icon="arrow-up"
@@ -147,7 +157,7 @@ export const QueryGroupEditor = (props: QueryGroupEditorProps) => {
           </Show>
         )}
       </For>
-      <div class="vui-qb__add">
+      <div class={styles.actions}>
         <Button
           variant="ghost"
           size="sm"
@@ -172,7 +182,7 @@ export const QueryGroupEditor = (props: QueryGroupEditorProps) => {
           <Button
             variant="ghost"
             size="sm"
-            class="vui-qb__drop"
+            class={styles.remove}
             disabled={props.disabled}
             onClick={() => props.onRemove()}
           >
@@ -183,7 +193,7 @@ export const QueryGroupEditor = (props: QueryGroupEditorProps) => {
           <Button
             variant="ghost"
             size="sm"
-            class="vui-qb__drop"
+            class={styles.remove}
             disabled={props.disabled || !props.group.rules.length}
             onClick={() => props.onClear?.()}
           >

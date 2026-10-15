@@ -1,0 +1,13 @@
+.control {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--space-2-5);
+  border: 0;
+  outline: none;
+  background: var(--bg-field);
+  color: var(--fg-primary);
+  font: var(--type-body-sm);
+  letter-spacing: var(--type-body-sm-tracking);
+  text-align: inherit;
+}

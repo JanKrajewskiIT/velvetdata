@@ -2,6 +2,7 @@ import { For, Show } from 'solid-js';
 
 import { createVirtualRecord } from './createVirtualRecord';
 import type { DataGridController } from './dataGridController';
+import styles from './GridBody.module.css';
 import { GridMeasuredRow } from './GridMeasuredRow';
 
 export interface GridBodyProps<T extends object> {
@@ -16,7 +17,11 @@ export const GridBody = <T extends object>(props: GridBodyProps<T>) => (
         return (
           <>
             <Show when={props.grid.window.gapBefore(key) > 0}>
-              <div aria-hidden="true" style={{ height: `${props.grid.window.gapBefore(key)}px` }} />
+              <div
+                class={styles.spacer}
+                aria-hidden="true"
+                style={{ '--data-grid-gap': `${props.grid.window.gapBefore(key)}px` }}
+              />
             </Show>
             <Show when={record()}>
               {(current) => (
@@ -28,7 +33,7 @@ export const GridBody = <T extends object>(props: GridBodyProps<T>) => (
       }}
     </For>
     <Show when={props.grid.window.tail() > 0}>
-      <div aria-hidden="true" style={{ height: `${props.grid.window.tail()}px` }} />
+      <div class={styles.spacer} aria-hidden="true" style={{ '--data-grid-gap': `${props.grid.window.tail()}px` }} />
     </Show>
   </>
 );

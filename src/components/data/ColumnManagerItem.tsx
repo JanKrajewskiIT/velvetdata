@@ -1,8 +1,8 @@
-import { Handle, IconButton, Switch } from '@jankrajewskiit/ui/bare';
-import { cx } from '@jankrajewskiit/ui/common';
+import { Handle, IconButton, Switch, Text } from '@jankrajewskiit/ui/bare';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import type { ColumnManagerController } from './columnManagerController';
+import styles from './ColumnManagerItem.module.css';
 import type { ColumnPin, ColumnState } from './columnManagerTypes';
 
 export interface ColumnManagerItemProps {
@@ -17,20 +17,18 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
   const column = () => props.manager.model.state().find((x) => x.key === props.columnKey) ?? placeholder();
   const locked = () => props.manager.model.isLocked(column().key);
   const atMax = () => !column().pin && props.manager.model.limitReached();
-  const dropClass = () => {
+  const dropPosition = () => {
     const target = props.manager.drag.over();
     return target?.key === column().key && props.manager.drag.dragKey() && props.manager.drag.dragKey() !== column().key
-      ? `vui-colman__item--${target.pos}`
-      : false;
+      ? target.pos
+      : undefined;
   };
   return (
     <li
-      class={cx(
-        'vui-colman__item',
-        !column().visible && 'vui-colman__item--off',
-        props.manager.drag.dragKey() === column().key && 'vui-colman__item--drag',
-        dropClass(),
-      )}
+      class={styles.root}
+      data-pinned={!!props.pin || undefined}
+      data-dragging={props.manager.drag.dragKey() === column().key || undefined}
+      data-drop={dropPosition()}
       draggable={props.manager.model.canMove(column().key)}
       onDragStart={(e) => props.manager.drag.startDrag(e, column().key)}
       onDragOver={(e) => props.manager.drag.dragOverItem(e, column().key, props.pin)}
@@ -39,13 +37,20 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
     >
       <Handle
         data-grip={column().key}
-        class="vui-colman__grip"
         icon={locked() ? 'lock' : 'grip-vertical'}
         disabled={!props.manager.model.canMove(column().key)}
         label={translate('velvetData.columnManager.reorder', { name: props.manager.model.nameOf(column().key) })}
         onKeyDown={(e) => props.manager.keyMove(e, column())}
       />
-      <span class="vui-colman__name">{props.manager.model.labelOf(column().key)}</span>
+      <Text
+        as="span"
+        variant={props.pin ? 'label' : 'body'}
+        tone={column().visible ? 'primary' : 'tertiary'}
+        truncate
+        class={styles.name}
+      >
+        {props.manager.model.labelOf(column().key)}
+      </Text>
       <IconButton
         size="xs"
         icon="pin"
@@ -59,7 +64,7 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
               ? 'velvetData.columnManager.unpin'
               : 'velvetData.columnManager.pinLeft',
         )}
-        class={cx('vui-colman__pin', column().pin && 'vui-colman__pin--on')}
+        variant={column().pin ? 'soft' : 'ghost'}
         disabled={!props.manager.model.canPin(column().key) || atMax()}
         aria-pressed={!!column().pin}
         onClick={() => props.manager.model.togglePin(column())}

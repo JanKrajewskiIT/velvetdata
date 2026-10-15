@@ -1,10 +1,12 @@
-import { Checkbox } from '@jankrajewskiit/ui/bare';
-import { cx } from '@jankrajewskiit/ui/common';
+import { Text } from '@jankrajewskiit/ui/bare';
 import { createMemo, For, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import type { DataGridController } from './dataGridController';
 import { GridCell } from './GridCell';
+import styles from './GridRow.module.css';
+import { GridRowNumber } from './GridRowNumber';
+import { GridSelectionCell } from './GridSelectionCell';
 
 export interface GridRowProps<T extends object> {
   grid: DataGridController<T>;
@@ -28,27 +30,19 @@ export const GridRow = <T extends object>(props: GridRowProps<T>) => {
         aria-rowindex={props.grid.window.rowIndex(props.index)}
         aria-selected={props.grid.config.selectable ? isSelected() : undefined}
         aria-expanded={props.grid.config.renderDetail ? isOpen() : undefined}
-        class={cx(
-          'vui-grid__row',
-          props.grid.active.cell().row === props.index && 'vui-grid__row--cur',
-          isSelected() && 'vui-grid__row--sel',
-          isOpen() && 'vui-grid__row--open',
-        )}
+        class={styles.row}
+        data-current={props.grid.active.cell().row === props.index || undefined}
       >
         <Show when={props.grid.config.rowNumbers}>
-          <div class="vui-grid__rn" aria-hidden="true">
-            {props.index + 1}
-          </div>
+          <GridRowNumber index={props.index} />
         </Show>
         <Show when={props.grid.config.selectable}>
-          <div role="gridcell" class="vui-grid__chk" style={props.grid.layout.checkLeft()}>
-            <Checkbox
-              tabIndex={-1}
-              aria-label={translate('velvetData.dataGrid.selectRow', { row: props.index + 1 })}
-              checked={isSelected()}
-              onChange={() => props.grid.selection.toggleRow(key())}
-            />
-          </div>
+          <GridSelectionCell
+            style={props.grid.layout.checkLeft()}
+            label={translate('velvetData.dataGrid.selectRow', { row: props.index + 1 })}
+            checked={isSelected()}
+            onChange={() => props.grid.selection.toggleRow(key())}
+          />
         </Show>
         <For each={props.grid.view.cols().map((column) => column.key)}>
           {(columnKey, ci) => {
@@ -76,16 +70,16 @@ export const GridRow = <T extends object>(props: GridRowProps<T>) => {
           role="row"
           onFocus={retainFocus}
           aria-rowindex={props.grid.window.rowIndex(props.index) + 1}
-          class="vui-grid__row vui-grid__row--detail"
+          class={styles.detailRow}
         >
           <div
             role="gridcell"
             aria-colspan={props.grid.view.cols().length + (props.grid.config.selectable ? 1 : 0)}
-            class="vui-grid__detail"
+            class={styles.detail}
           >
-            <div class="vui-grid__detail-in" style={{ 'padding-left': `${props.grid.layout.leadWidth() + 36}px` }}>
+            <Text as="div" variant="body-sm" class={styles.detailContent}>
               {props.grid.config.renderDetail?.(props.row)}
-            </div>
+            </Text>
           </div>
         </div>
       </Show>

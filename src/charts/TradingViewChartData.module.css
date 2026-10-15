@@ -1,0 +1,9 @@
+.summary {
+  cursor: pointer;
+  padding-block: var(--space-2);
+
+  &:focus-visible {
+    outline: var(--border-width-thick) solid var(--border-focus);
+    outline-offset: var(--space-1);
+  }
+}

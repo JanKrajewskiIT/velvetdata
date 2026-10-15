@@ -1,0 +1,47 @@
+.root {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--control-height-xs) minmax(0, 1fr) var(--control-height-xs) auto;
+  align-items: center;
+  gap: var(--space-1-5);
+  min-height: var(--option-height);
+  padding: 0 var(--space-2) 0 var(--space-1);
+  border-radius: var(--option-radius);
+  transition:
+    background-color var(--motion-fast),
+    opacity var(--motion-fast);
+
+  &:hover {
+    background: var(--option-bg-active);
+  }
+
+  &[data-pinned]:hover {
+    background: var(--bg-raised);
+  }
+
+  &[data-dragging] {
+    opacity: 0.4;
+  }
+
+  &[data-drop='above']::before,
+  &[data-drop='below']::after {
+    content: '';
+    position: absolute;
+    inset-inline: var(--space-2);
+    height: var(--border-width-thick);
+    border-radius: var(--radius-2xs);
+    background: var(--action-primary);
+  }
+
+  &[data-drop='above']::before {
+    top: calc(-1 * var(--border-width));
+  }
+
+  &[data-drop='below']::after {
+    bottom: calc(-1 * var(--border-width));
+  }
+}
+
+.name {
+  min-width: 0;
+}

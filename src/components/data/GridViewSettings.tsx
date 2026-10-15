@@ -1,9 +1,11 @@
-import { Button, Popover, reportAsyncError } from '@jankrajewskiit/ui/bare';
+import { Button, reportAsyncError, Text } from '@jankrajewskiit/ui/bare';
 import { createSignal, onCleanup, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
 import type { DataGridController } from './dataGridController';
+import { DataPopover } from './DataPopover';
 import { MAX_GRID_VIEW_BYTES } from './gridViewCodec';
+import styles from './GridViewSettings.module.css';
 
 export interface GridViewSettingsProps<T extends object> {
   grid: DataGridController<T>;
@@ -49,8 +51,7 @@ export const GridViewSettings = <T extends object>(props: GridViewSettingsProps<
     }
   };
   return (
-    <Popover
-      align="end"
+    <DataPopover
       title={translate('velvetData.dataGrid.viewSettings')}
       trigger={
         <Button size="sm" variant="secondary" iconLeft="sliders">
@@ -58,7 +59,7 @@ export const GridViewSettings = <T extends object>(props: GridViewSettingsProps<
         </Button>
       }
     >
-      <div class="vui-dgrid__settings">
+      <div class={styles.root}>
         <Button
           size="sm"
           variant="secondary"
@@ -91,9 +92,11 @@ export const GridViewSettings = <T extends object>(props: GridViewSettingsProps<
           }}
         />
         <Show when={reading()}>
-          <span role="status">{translate('velvetData.dataGrid.importingView')}</span>
+          <Text as="span" variant="caption" tone="tertiary" role="status">
+            {translate('velvetData.dataGrid.importingView')}
+          </Text>
         </Show>
       </div>
-    </Popover>
+    </DataPopover>
   );
 };

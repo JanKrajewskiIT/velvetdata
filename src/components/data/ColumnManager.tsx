@@ -1,8 +1,9 @@
-import { Button, SearchInput } from '@jankrajewskiit/ui/bare';
+import { Button, Heading, SearchInput, VisuallyHidden } from '@jankrajewskiit/ui/bare';
 import { cx } from '@jankrajewskiit/ui/common';
 import { createSignal, For, type JSX, mergeProps, Show } from 'solid-js';
 
 import { useTranslate } from '../../i18n/useTranslate';
+import styles from './ColumnManager.module.css';
 import type { ColumnManagerController } from './columnManagerController';
 import { ColumnManagerFooter } from './ColumnManagerFooter';
 import type { ColumnManagerProps } from './columnManagerTypes';
@@ -18,7 +19,7 @@ const SEARCH_MIN_COLUMNS = 8;
  * Table column settings: visibility (switch), order (drag the grip, or focus it and press ↑/↓ — moves cross section
  * boundaries), and freezing (pin button). Any number of columns can be pinned; sections are Pinned left · Columns ·
  * Pinned right (right appears with `pinRight` or when a column is already pinned right). Search appears past 8 columns.
- * Usually inside a Popover opened from a "Columns" button in the Table toolbar. Feed Table with `ApplyColumns(columns, state)`.
+ * Usually inside a Popover opened from a "Columns" button in the Table toolbar. Feed Table with `applyColumns(columns, state)`.
  */
 export const ColumnManager = (props: ColumnManagerProps): JSX.Element => {
   const p = mergeProps({ pinRight: false } satisfies Partial<ColumnManagerProps>, props);
@@ -56,10 +57,12 @@ export const ColumnManager = (props: ColumnManagerProps): JSX.Element => {
       ref={(element) => {
         root = element;
       }}
-      class={cx('vui-colman', p.class)}
+      class={cx(styles.root, p.class)}
     >
-      <div class="vui-colman__head">
-        <span class="vui-colman__title">{title()}</span>
+      <div class={styles.header}>
+        <Heading level={2} variant="title" tone="primary" class={styles.title}>
+          {title()}
+        </Heading>
         <Button variant="link" size="xs" onClick={reset}>
           {translate('velvetData.columnManager.resetLabel')}
         </Button>
@@ -67,20 +70,18 @@ export const ColumnManager = (props: ColumnManagerProps): JSX.Element => {
       <Show when={showSearch()}>
         <SearchInput
           size="sm"
-          class="vui-colman__search"
+          class={styles.search}
           placeholder={translate('velvetData.columnManager.searchPlaceholder')}
           aria-label={translate('velvetData.columnManager.searchLabel')}
           value={search.query()}
           onValueChange={search.setQuery}
         />
       </Show>
-      <div class="vui-colman__body">
+      <div class={styles.body}>
         <For each={model.zones()}>{(zone) => <ColumnManagerZone manager={manager} zone={zone} />}</For>
       </div>
       <ColumnManagerFooter manager={manager} />
-      <span class="vui-sr-only" aria-live="polite">
-        {message()}
-      </span>
+      <VisuallyHidden aria-live="polite">{message()}</VisuallyHidden>
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import { useI18n } from '@jankrajewskiit/i18n';
+import { Text } from '@jankrajewskiit/ui/bare';
 import { createMemo, For, Show } from 'solid-js';
 
 import { useTranslate } from '../i18n/useTranslate';
 import type { TradingViewChartPoint } from './tradingTypes';
-import styles from './TradingViewChart.module.css';
+import styles from './TradingViewChartMetrics.module.css';
 
 export interface TradingViewChartMetricsProps {
   readonly point?: TradingViewChartPoint;
@@ -35,18 +36,30 @@ export const TradingViewChartMetrics = (props: TradingViewChartMetricsProps) => 
       : [];
   };
   return (
-    <div class={styles.metrics}>
+    <div class={styles.root}>
       <Show when={props.point}>
         {(point) => (
-          <time dateTime={new Date(point().time * 1000).toISOString()}>{time().format(point().time * 1000)}</time>
+          <Text
+            as="time"
+            variant="caption"
+            tone="secondary"
+            tabular
+            dateTime={new Date(point().time * 1000).toISOString()}
+          >
+            {time().format(point().time * 1000)}
+          </Text>
         )}
       </Show>
       <dl class={styles.values}>
         <For each={values()}>
           {(metric) => (
             <div>
-              <dt>{metric.label}</dt>
-              <dd>{number().format(metric.value)}</dd>
+              <Text as="dt" variant="caption" tone="tertiary">
+                {metric.label}
+              </Text>
+              <Text as="dd" variant="caption" tone="primary" mono tabular class={styles.value}>
+                {number().format(metric.value)}
+              </Text>
             </div>
           )}
         </For>

@@ -1,7 +1,9 @@
+import { Text } from '@jankrajewskiit/ui/bare';
 import { createUniqueId, Show } from 'solid-js';
 
 import type { DataGridController } from './dataGridController';
 import type { GridColumn } from './dataGridTypes';
+import styles from './GridCellEditor.module.css';
 import type { GridEditorContext } from './gridEditorTypes';
 import { GridNativeEditor } from './GridNativeEditor';
 
@@ -37,7 +39,7 @@ export const GridCellEditor = <T extends object>(props: GridCellEditorProps<T>) 
     cancel: () => props.grid.active.cancelEdit(props.rowIndex, props.colIndex),
   };
   return (
-    <div class="vui-grid__editor" aria-busy={props.grid.active.pending() || undefined}>
+    <div class={styles.root} aria-busy={props.grid.active.pending() || undefined}>
       <Show
         when={props.column.editor}
         keyed
@@ -55,9 +57,9 @@ export const GridCellEditor = <T extends object>(props: GridCellEditorProps<T>) 
       </Show>
       <Show when={props.grid.active.error()}>
         {(message) => (
-          <span id={errorId} role="alert" class="vui-grid__edit-error">
+          <Text as="span" variant="caption" tone="danger" id={errorId} role="alert" class={styles.error}>
             {message()}
-          </span>
+          </Text>
         )}
       </Show>
     </div>
