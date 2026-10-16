@@ -81,9 +81,9 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@jankrajewskiit/configs": "^3.7.5",
-    "@jankrajewskiit/i18n": "^3.7.5",
-    "@jankrajewskiit/ui": "^3.7.5",
+    "@jankrajewskiit/configs": "^3.7.10",
+    "@jankrajewskiit/i18n": "^3.7.10",
+    "@jankrajewskiit/ui": "^3.7.10",
     "@size-limit/file": "^14.2.0",
     "@types/node": "^26.6.5",
     "@typescript/native": "npm:typescript@^7.0.2",
