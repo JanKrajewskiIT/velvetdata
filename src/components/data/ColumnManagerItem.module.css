@@ -1,7 +1,7 @@
 .root {
   position: relative;
   display: grid;
-  grid-template-columns: var(--control-height-xs) minmax(0, 1fr) var(--control-height-xs) auto;
+  grid-template-columns: var(--control-height-xs) minmax(0, 1fr) var(--space-7) auto;
   align-items: center;
   gap: var(--space-1-5);
   min-height: var(--option-height);
@@ -13,6 +13,29 @@
 
   &:hover {
     background: var(--option-bg-active);
+  }
+
+  &:hover .pin {
+    opacity: 1;
+  }
+
+  &[data-pinned] .name {
+    font-weight: var(--type-label-weight);
+  }
+
+  & .grip {
+    width: var(--control-height-xs);
+
+    --glyph-size: var(--size-icon-sm);
+
+    &:hover {
+      background: none;
+    }
+
+    &:disabled {
+      cursor: default;
+      color: var(--fg-tertiary);
+    }
   }
 
   &[data-pinned]:hover {
@@ -44,4 +67,31 @@
 
 .name {
   min-width: 0;
+}
+
+.pin {
+  opacity: 0;
+  transition:
+    opacity var(--motion-fast),
+    color var(--motion-fast),
+    background-color var(--motion-fast);
+
+  &:focus-visible,
+  &[aria-pressed='true'] {
+    opacity: 1;
+  }
+
+  &[aria-pressed='true'] {
+    --button-context-ghost-fg: var(--fg-brand);
+  }
+
+  &:disabled:not([aria-pressed='true']) {
+    opacity: 0;
+  }
+}
+
+@media (hover: none) {
+  .pin {
+    opacity: 1;
+  }
 }

@@ -1,4 +1,6 @@
 .cell {
+  --data-grid-cell-focus-shadow: initial;
+
   display: flex;
   align-items: center;
   height: var(--grid-row-height);
@@ -17,12 +19,12 @@
   }
 
   &[data-pin-edge='start'] {
-    box-shadow: var(--data-grid-pin-start-shadow);
+    box-shadow: var(--data-grid-cell-focus-shadow, var(--data-grid-pin-start-shadow));
     transition: box-shadow var(--motion-fast);
   }
 
   &[data-pin-edge='end'] {
-    box-shadow: var(--data-grid-pin-end-shadow);
+    box-shadow: var(--data-grid-cell-focus-shadow, var(--data-grid-pin-end-shadow));
     transition: box-shadow var(--motion-fast);
   }
 }

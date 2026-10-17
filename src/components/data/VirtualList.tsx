@@ -151,7 +151,7 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
                       <Show when={record()} keyed>
                         {(entry) => (
                           <Show when={p.renderItem} keyed fallback={String(entry.item)}>
-                            {(render) => render(entry.item, entry.index, state) ?? String(entry.item)}
+                            {(render) => render(entry.item, entry.index, state)}
                           </Show>
                         )}
                       </Show>
@@ -174,7 +174,9 @@ export const VirtualList = <T,>(props: VirtualListProps<T>): JSX.Element => {
       <Show when={p.error || scrolling.failed()}>
         <div role="alert" class={styles.error}>
           <Text as="div" variant="body-sm" tone="danger">
-            {p.error ?? translate('velvetData.virtualList.loadError')}
+            <Show when={p.error} fallback={translate('velvetData.virtualList.loadError')}>
+              {(message) => message()}
+            </Show>
           </Text>
           <Button
             size="xs"

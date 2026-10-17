@@ -3,13 +3,15 @@
   outline: none;
   cursor: cell;
 
-  &[data-active] {
-    box-shadow: var(--focus-ring-inset);
+  &[data-active],
+  &[data-editing] {
+    --data-grid-cell-focus-shadow: var(--focus-ring-inset);
+
+    box-shadow: var(--data-grid-cell-focus-shadow);
   }
 
   &[data-editing] {
     padding: 0;
-    box-shadow: var(--focus-ring-inset);
     overflow: visible;
     z-index: var(--z-dropdown);
   }

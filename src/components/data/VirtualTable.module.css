@@ -22,6 +22,14 @@
     background: var(--bg-hover);
   }
 
+  &[data-focused] {
+    box-shadow: inset var(--border-width-accent) 0 0 var(--border-focus);
+  }
+
+  &:dir(rtl)[data-focused] {
+    box-shadow: inset calc(-1 * var(--border-width-accent)) 0 0 var(--border-focus);
+  }
+
   &[data-interactive] {
     cursor: pointer;
   }

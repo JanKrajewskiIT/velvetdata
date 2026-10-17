@@ -90,9 +90,10 @@ export const QueryGroupEditor = (props: QueryGroupEditorProps) => {
                     </Match>
                     <Match when={position() === 1}>
                       <Button
-                        variant="soft"
+                        variant="secondary"
                         size="xs"
                         iconRight="chevrons-up-down"
+                        class={styles.combinator}
                         disabled={props.disabled}
                         aria-label={translate(
                           combinator() === 'and'
@@ -139,14 +140,24 @@ export const QueryGroupEditor = (props: QueryGroupEditorProps) => {
                     <IconButton
                       size="xs"
                       icon="arrow-up"
-                      label={translate('velvetData.queryBuilder.moveUp')}
+                      label={translate(
+                        isQueryGroup(node())
+                          ? 'velvetData.queryBuilder.moveGroupUp'
+                          : 'velvetData.queryBuilder.moveConditionUp',
+                        { position: position() + 1 },
+                      )}
                       disabled={props.disabled || position() === 0}
                       onClick={() => move(position(), position() - 1)}
                     />
                     <IconButton
                       size="xs"
                       icon="arrow-down"
-                      label={translate('velvetData.queryBuilder.moveDown')}
+                      label={translate(
+                        isQueryGroup(node())
+                          ? 'velvetData.queryBuilder.moveGroupDown'
+                          : 'velvetData.queryBuilder.moveConditionDown',
+                        { position: position() + 1 },
+                      )}
                       disabled={props.disabled || position() === props.group.rules.length - 1}
                       onClick={() => move(position(), position() + 1)}
                     />

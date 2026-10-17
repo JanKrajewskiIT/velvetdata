@@ -16,6 +16,7 @@
   background: var(--bg-sunken);
 }
 
-.description {
+.summary .description {
+  font-size: var(--type-caption-size);
   overflow-wrap: anywhere;
 }

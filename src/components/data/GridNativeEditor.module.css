@@ -11,3 +11,10 @@
   letter-spacing: var(--type-body-sm-tracking);
   text-align: inherit;
 }
+
+@media (forced-colors: active) {
+  .control:focus-visible {
+    outline: var(--border-width-thick) solid Highlight;
+    outline-offset: calc(-1 * var(--border-width-thick));
+  }
+}

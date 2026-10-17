@@ -190,7 +190,7 @@ export const TradingViewChart = (props: TradingViewChartProps) => {
       <Show when={snapshot().value}>
         <TradingViewChartMetrics point={selectedPoint()} locale={local.locale} />
       </Show>
-      <Show when={local.status !== 'idle'}>
+      <Show when={failed() || local.status !== 'idle'}>
         <div role="status">
           <Badge tone={failed() ? 'danger' : 'neutral'} dot>
             {translate(STATUS_KEYS[failed() ? 'error' : local.status])}

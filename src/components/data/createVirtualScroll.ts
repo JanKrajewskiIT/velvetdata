@@ -75,7 +75,17 @@ export const createVirtualScroll = <T>(p: VirtualListConfig<T>, viewport: Access
   createEffect(
     on(
       () =>
-        [viewport(), p.items.length, p.loading, p.hasMore, p.error, p.height, revision(), operation.busy()] as const,
+        [
+          viewport(),
+          p.items.length,
+          p.loading,
+          p.hasMore,
+          p.error,
+          p.height,
+          p.dataKey,
+          revision(),
+          operation.busy(),
+        ] as const,
       ([element]) => {
         if (!element) return;
         const frame = requestAnimationFrame(schedule);

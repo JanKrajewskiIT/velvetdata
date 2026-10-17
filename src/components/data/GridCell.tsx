@@ -84,7 +84,9 @@ export const GridCell = <T extends object>(props: GridCellProps<T>) => {
                 class={styles.customValue}
                 data-numeric={props.column.type === 'number' || undefined}
               >
-                {render(props.row)}
+                <Show when={props.row} keyed>
+                  {(row) => render(row)}
+                </Show>
               </Text>
             )}
           </Show>

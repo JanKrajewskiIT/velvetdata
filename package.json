@@ -70,7 +70,7 @@
   },
   "peerDependencies": {
     "@jankrajewskiit/i18n": ">=3.4.4 <4",
-    "@jankrajewskiit/ui": ">=3.7.2 <4",
+    "@jankrajewskiit/ui": ">=3.8.1 <4",
     "lightweight-charts": ">=5.1.0 <6",
     "solid-js": ">=1.9.0 <2"
   },
@@ -83,7 +83,7 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@jankrajewskiit/configs": "^3.8.0",
     "@jankrajewskiit/i18n": "^3.8.0",
-    "@jankrajewskiit/ui": "^3.8.0",
+    "@jankrajewskiit/ui": "^3.8.1",
     "@size-limit/file": "^14.2.0",
     "@types/node": "^26.6.5",
     "@typescript/native": "npm:typescript@^7.0.2",

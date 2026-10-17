@@ -26,7 +26,11 @@ export const ColumnManagerZone = (props: ColumnManagerZoneProps) => {
   return (
     <Show when={!props.manager.search.needle() || rows().length > 0}>
       <section class={styles.root} aria-label={translate(props.zone.labelKey)}>
-        <SectionLabel class={styles.heading} end={zoneCount(props.zone.pin, all().length)}>
+        <SectionLabel
+          class={styles.heading}
+          tone={props.zone.pin ? 'brand' : undefined}
+          end={zoneCount(props.zone.pin, all().length)}
+        >
           {translate(props.zone.labelKey)}
         </SectionLabel>
         <ul

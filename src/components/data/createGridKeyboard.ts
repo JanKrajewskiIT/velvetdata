@@ -8,6 +8,10 @@ import type { GridColumn } from './dataGridTypes';
 
 const PAGE_ROWS = 10;
 
+const copyCell = async (value: string): Promise<void> => {
+  await navigator.clipboard.writeText(value);
+};
+
 export interface GridKeyboardOptions<T extends object> {
   active: GridActiveCell;
   selection: GridSelection<T>;
@@ -58,6 +62,6 @@ export const createGridKeyboard =
       e.preventDefault();
       active.startEdit(row, col, e.key);
     } else if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
-      navigator.clipboard.writeText(cellText(rowValue(record, column.key))).catch(reportAsyncError);
+      void copyCell(cellText(rowValue(record, column.key))).catch(reportAsyncError);
     }
   };

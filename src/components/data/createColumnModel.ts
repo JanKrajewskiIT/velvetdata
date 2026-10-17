@@ -26,7 +26,6 @@ export interface ColumnModel {
   pinnedCount: () => number;
   limitReached: () => boolean;
   labelOf: (key: string) => JSX.Element;
-  isLocked: (key: string) => boolean;
   canHide: (key: string) => boolean;
   canPin: (key: string) => boolean;
   canMove: (key: string) => boolean;
@@ -57,7 +56,6 @@ export const createColumnModel = (options: ColumnModelOptions): ColumnModel => {
     return max != null && pinnedCount() >= max;
   };
   const labelOf = (key: string) => options.columns().find((c) => c.key === key)?.label ?? key;
-  const isLocked = (key: string) => !!options.columns().find((c) => c.key === key)?.locked;
   const capability = (key: string, name: keyof ReturnType<typeof columnCapabilities>) => {
     const column = options.columns().find((candidate) => candidate.key === key);
     return !!column && columnCapabilities(column)[name];
@@ -123,7 +121,6 @@ export const createColumnModel = (options: ColumnModelOptions): ColumnModel => {
     pinnedCount,
     limitReached,
     labelOf,
-    isLocked,
     canHide,
     canPin,
     canMove,

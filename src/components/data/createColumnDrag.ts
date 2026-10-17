@@ -52,7 +52,7 @@ export const createColumnDrag = (model: ColumnModel): ColumnDrag => {
     e.preventDefault();
     e.stopPropagation();
     const dragged = dragKey();
-    if (dragged && over()) {
+    if (dragged && dragged !== c.key && over()) {
       const list = model.inZone(c.pin).filter((x) => x.key !== dragged);
       let index = list.findIndex((x) => x.key === c.key);
       if (over()?.pos === 'below') index++;

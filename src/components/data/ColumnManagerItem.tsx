@@ -15,7 +15,6 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
   const translate = useTranslate();
   const placeholder = (): ColumnState => ({ key: props.columnKey, visible: true, pin: props.pin });
   const column = () => props.manager.model.state().find((x) => x.key === props.columnKey) ?? placeholder();
-  const locked = () => props.manager.model.isLocked(column().key);
   const atMax = () => !column().pin && props.manager.model.limitReached();
   const dropPosition = () => {
     const target = props.manager.drag.over();
@@ -37,18 +36,13 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
     >
       <Handle
         data-grip={column().key}
-        icon={locked() ? 'lock' : 'grip-vertical'}
+        class={styles.grip}
+        icon={props.manager.model.canMove(column().key) ? 'grip-vertical' : 'lock'}
         disabled={!props.manager.model.canMove(column().key)}
         label={translate('velvetData.columnManager.reorder', { name: props.manager.model.nameOf(column().key) })}
         onKeyDown={(e) => props.manager.keyMove(e, column())}
       />
-      <Text
-        as="span"
-        variant={props.pin ? 'label' : 'body'}
-        tone={column().visible ? 'primary' : 'tertiary'}
-        truncate
-        class={styles.name}
-      >
+      <Text as="span" variant="body" tone={column().visible ? 'primary' : 'tertiary'} truncate class={styles.name}>
         {props.manager.model.labelOf(column().key)}
       </Text>
       <IconButton
@@ -64,7 +58,7 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
               ? 'velvetData.columnManager.unpin'
               : 'velvetData.columnManager.pinLeft',
         )}
-        variant={column().pin ? 'soft' : 'ghost'}
+        class={styles.pin}
         disabled={!props.manager.model.canPin(column().key) || atMax()}
         aria-pressed={!!column().pin}
         onClick={() => props.manager.model.togglePin(column())}

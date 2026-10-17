@@ -19,7 +19,7 @@ export interface VirtualListProps<T = unknown> {
   overscan?: number;
   /** Space between rows px. @default 0 */
   gap?: number;
-  /** Stable key. @default item.id ?? item.key ?? index */
+  /** Stable key. Defaults to item.id/item.key, object identity, or the index for primitive items. */
   getKey?: (item: T, index: number) => RowKey;
   /** listbox semantics + selected styling. */
   selectable?: boolean;

@@ -15,6 +15,8 @@ export const GridHeaderCell = <T extends object>(props: GridHeaderCellProps<T>) 
   const translate = useTranslate();
   const column = createMemo(() => props.grid.view.columnsByKey().get(props.columnKey));
   const sorted = () => props.grid.view.sort()?.key === props.columnKey;
+  const editable = () =>
+    props.grid.active.canEdit(props.grid.view.cols().findIndex((candidate) => candidate.key === props.columnKey));
   return (
     <Show when={column()}>
       {(current) => (
@@ -50,7 +52,7 @@ export const GridHeaderCell = <T extends object>(props: GridHeaderCellProps<T>) 
                 />
               </Show>
             </Show>
-            <Show when={current().editable}>
+            <Show when={editable()}>
               <Glyph name="pencil" size="xs" class={styles.editIcon} />
             </Show>
           </button>

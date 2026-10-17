@@ -38,7 +38,7 @@ export interface VirtualTableProps<T extends object = object> {
   height?: number;
   /** @default 8 */
   overscan?: number;
-  /** Stable record key used for row identity and focus; falls back to the row index. @default 'id' */
+  /** Stable record key used for row identity and focus; falls back to object identity. @default 'id' */
   rowKey?: string;
   getRowId?: (row: T) => RowKey;
   onRowClick?: (row: T) => void;
