@@ -17,7 +17,7 @@ jobs:
       CONFIGS_READ_TOKEN: ${{ secrets.CONFIGS_READ_TOKEN }}
   publish:
     needs: verify
-    uses: JanKrajewskiIT/velvetconfigs/.github/workflows/publish-package.yml@63c6a5b52de7049094e47aa6488e3cebcbd29f05 # v3.7.13
+    uses: JanKrajewskiIT/velvetconfigs/.github/workflows/publish-package.yml@0d574e1e43ae072a9ec54852490f1b5eb5dc9c8a # v3.19.0 tooling fix
     permissions:
       contents: read
       packages: write
