@@ -120,8 +120,10 @@ export const createGridView = <T extends object>(config: Accessor<DataGridProps<
     const currentSort = sort();
     const staticColumn = currentSort && definitionsByKey().get(currentSort.key);
     if (!config().manualSorting && currentSort && staticColumn) {
-      const value = (row: T) =>
-        staticColumn.sortAccessor ? staticColumn.sortAccessor(row) : rowValue(row, staticColumn.key);
+      const value = (row: T) => {
+        const rawValue = staticColumn.sortAccessor ? staticColumn.sortAccessor(row) : rowValue(row, staticColumn.key);
+        return typeof rawValue === 'boolean' ? String(rawValue) : rawValue;
+      };
       out = [...out].sort(
         (a, b) =>
           (staticColumn.sortFn ? staticColumn.sortFn(a, b) : compareValues(value(a), value(b))) *

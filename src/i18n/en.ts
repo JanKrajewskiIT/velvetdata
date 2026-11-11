@@ -53,6 +53,7 @@ export const dataEn = defineDictionary({
       unpin: 'Unpin',
       pinLeft: 'Pin left',
       showColumn: 'Show {name}',
+      visibilityLimitReached: 'The minimum number of visible columns must remain visible.',
       dropHint: 'Drag a column here or use its pin',
       allPinned: 'All columns are pinned',
       visibleCount: '{visible} of {total} visible',

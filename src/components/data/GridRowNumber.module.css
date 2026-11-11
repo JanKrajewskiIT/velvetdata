@@ -4,6 +4,12 @@
   background: var(--data-grid-leading-bg, var(--bg-subtle));
   color: var(--data-grid-leading-fg, var(--fg-tertiary));
 
+  &[aria-hidden='true'] {
+    font-size: var(--type-overline-size);
+    font-weight: var(--type-body-weight);
+    line-height: 1;
+  }
+
   &[data-header] {
     z-index: 4;
   }

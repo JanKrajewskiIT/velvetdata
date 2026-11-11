@@ -16,6 +16,10 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
   const placeholder = (): ColumnState => ({ key: props.columnKey, visible: true, pin: props.pin });
   const column = () => props.manager.model.state().find((x) => x.key === props.columnKey) ?? placeholder();
   const atMax = () => !column().pin && props.manager.model.limitReached();
+  const visibilityHint = () =>
+    column().visible && props.manager.model.visibilityLimitReached()
+      ? translate('velvetData.columnManager.visibilityLimitReached')
+      : undefined;
   const dropPosition = () => {
     const target = props.manager.drag.over();
     return target?.key === column().key && props.manager.drag.dragKey() && props.manager.drag.dragKey() !== column().key
@@ -70,6 +74,7 @@ export const ColumnManagerItem = (props: ColumnManagerItemProps) => {
         })}
         checked={column().visible}
         disabled={!props.manager.model.canHide(column().key)}
+        title={visibilityHint()}
         onChange={() => props.manager.model.toggleVisible(column())}
       />
     </li>

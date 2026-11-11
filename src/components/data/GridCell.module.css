@@ -45,12 +45,26 @@
   }
 }
 
-.expander {
+.root .expander {
+  --button-context-ghost-fg: var(--fg-tertiary);
+  --button-context-ghost-bg-hover: transparent;
+
   flex: none;
   margin-inline: calc(-1 * var(--space-1)) var(--space-1);
-  transition: transform var(--motion-fast);
+  border-radius: var(--radius-sm);
+  transition:
+    transform var(--motion-fast),
+    color var(--motion-fast),
+    background-color var(--motion-fast);
 
   &[aria-expanded='true'] {
+    --button-context-ghost-fg: var(--fg-brand);
+
     transform: rotate(90deg);
+  }
+
+  &:hover {
+    --button-context-ghost-fg: var(--fg-primary);
+    --button-context-ghost-bg-hover: var(--bg-pressed);
   }
 }

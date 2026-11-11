@@ -56,6 +56,7 @@ export const dataPl: TranslationOf<typeof dataEn> = {
       unpin: 'Odepnij',
       pinLeft: 'Przypnij po lewej',
       showColumn: 'Pokaż: {name}',
+      visibilityLimitReached: 'Osiągnięto minimalną liczbę widocznych kolumn.',
       dropHint: 'Przeciągnij tu kolumnę lub użyj jej przypięcia',
       allPinned: 'Wszystkie kolumny są przypięte',
       visibleCount: 'Widoczne: {visible} z {total}',

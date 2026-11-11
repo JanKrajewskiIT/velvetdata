@@ -25,6 +25,7 @@ export interface ColumnModel {
   inZone: (pin: ColumnPin | null) => ColumnState[];
   pinnedCount: () => number;
   limitReached: () => boolean;
+  visibilityLimitReached: Accessor<boolean>;
   labelOf: (key: string) => JSX.Element;
   canHide: (key: string) => boolean;
   canPin: (key: string) => boolean;
@@ -60,10 +61,11 @@ export const createColumnModel = (options: ColumnModelOptions): ColumnModel => {
     const column = options.columns().find((candidate) => candidate.key === key);
     return !!column && columnCapabilities(column)[name];
   };
+  const visibilityLimitReached = createMemo(
+    () => state().filter((column) => column.visible).length <= (options.minVisible() ?? 0),
+  );
   const canHide = (key: string) =>
-    capability(key, 'hide') &&
-    (!state().find((column) => column.key === key)?.visible ||
-      state().filter((column) => column.visible).length > (options.minVisible() ?? 0));
+    capability(key, 'hide') && (!visibilityLimitReached() || !state().find((column) => column.key === key)?.visible);
   const canPin = (key: string) => capability(key, 'pin');
   const canMove = (key: string) => capability(key, 'move');
   const nameOf = (key: string) => {
@@ -120,6 +122,7 @@ export const createColumnModel = (options: ColumnModelOptions): ColumnModel => {
     inZone,
     pinnedCount,
     limitReached,
+    visibilityLimitReached,
     labelOf,
     canHide,
     canPin,

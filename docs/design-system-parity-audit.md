@@ -1,6 +1,6 @@
 # Audyt zgodności VelvetData z design systemem
 
-Stan: 17 października 2026. Audyt i przegląd poprawek wykonano statycznie. Nie uruchamiano aplikacji, testów, kompilacji, lintowania, formatowania ani skryptów weryfikacyjnych. Nie zmieniano testów, wygenerowanego `dist` ani referencji design systemu.
+Audyt bazowy wykonano 17 października 2026. Porównanie z nową referencją zaktualizowano 11 listopada 2026. Audyt i przegląd poprawek wykonano statycznie. Nie uruchamiano aplikacji, testów, kompilacji, lintowania, formatowania ani skryptów weryfikacyjnych. Nie zmieniano testów, wygenerowanego `dist` ani referencji design systemu.
 
 ## Zakres i mapowanie
 
@@ -20,7 +20,7 @@ Porównanie objęło props, wartości domyślne, aliasy callbacków, DOM, role i
 
 Pięć arkuszy referencyjnych porównano z odpowiadającymi im częściami 35 lokalnych CSS Modules, w tym modułami współdzielonymi i rozszerzeniami wykresu. Granice plików i hashe lokalnego CSS celowo różnią się przez scoped selectors, `composes`, logiczne kierunki, typografię prymitywów i rozszerzenia. Same różnice tekstowe nie są dowodem braku. VelvetData nie utrzymuje własnych kopii tokenów ani fontów; korzysta z VelvetUi i jego entry stylesheet.
 
-Identyfikatory SHA-256 odczytanych arkuszy referencji:
+Identyfikatory SHA-256 arkuszy z referencji użytej w audycie bazowym:
 
 | Arkusz             | SHA-256                                                            |
 | ------------------ | ------------------------------------------------------------------ |
@@ -77,11 +77,19 @@ Poniższe trzy problemy również poprawiono w źródłach i przejrzano statyczn
 
 Własne kontrakty zachowania są opisane także w dokumentach Recron `data-behavior.md` i `collection-contracts.md`. Ich historyczne numery wersji nie zastępują obecnego manifestu.
 
-## Zależność VelvetUi 3.8.1
+## Aktualizacja do nowej referencji
 
-W `package.json` ustawiono `devDependencies.@jankrajewskiit/ui` na `^3.8.1` oraz minimalny peer na `>=3.8.1 <4`. Minimalna wersja gwarantuje, że zadeklarowany kontrakt wymaga paczki z poprawkami wspólnych kontrolek i paneli. Nie zmieniano wersji samej paczki Data ani pozostałych zależności.
+- `DataGrid` porównuje wartości logiczne jako tekst `false` i `true`, zgodnie z referencją. Rosnąco `false` poprzedza `true`. Dotyczy to także wartości zwracanych przez `sortAccessor`. Własny `sortFn` nadal ma pierwszeństwo, a `manualSorting` przekazuje sortowanie konsumentowi.
+- `DataGrid` stosuje referencyjną typografię numerów wierszy oraz kolory przycisku rozwijania szczegółów w stanie spoczynku, po rozwinięciu i po najechaniu.
+- Skrót kopiowania w `DataGrid` korzysta z Clipboard API i zgłasza błąd przez `reportAsyncError`.
+- Referencja przeniosła `QueryBuilder` do grupy Data i używa `--space-0-5` dla odstępu między przyciskami przesuwania. VelvetData już stosuje ten token i eksportuje komponent z głównego wejścia.
+- `ColumnManager` podaje zlokalizowaną przyczynę blokady przełącznika po osiągnięciu minimum widocznych kolumn. Domyślne `minVisible=0` nadal pozwala ukryć wszystkie kolumny w samodzielnym komponencie.
+- `VirtualTable` używa referencyjnego nagłówka o wysokości 38 px, wagi tytułu w etykietach kolumn oraz typografii monospaced w stopce.
+- W przejrzanych scenariuszach `VirtualList` zachowuje kontrakt referencji dla wysokości wierszy, wirtualizacji, nawigacji i doładowania, z rozszerzeniami opisanymi powyżej.
 
-Zgodnie z odpowiedzią użytkownika agent zmienił wyłącznie deklaracje w `package.json`, bez wykonywania komendy instalacji i bez edycji lockfile lub `node_modules`. Podczas pracy pojawiła się niezależna aktualizacja środowiska: końcowy odczyt `package-lock.json` i manifestu zainstalowanej paczki wskazuje już VelvetUi 3.8.1. Zachowano tę zmianę. Nie podstawiano ręcznie adresu tarballa ani integrity.
+## Zależność VelvetUi
+
+VelvetData deklaruje w `package.json` zakres `^3` dla peer dependency oraz `^3.26.0` dla zależności deweloperskiej. Lockfile i lokalna instalacja wskazują VelvetUi `3.26.0`.
 
 ## Ograniczenia dowodów
 

@@ -143,6 +143,7 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
               as="div"
               variant="label-sm"
               tone="secondary"
+              tabular={c.align === 'right'}
               role="columnheader"
               class={styles.cell}
               data-numeric={c.align === 'right' || undefined}
@@ -226,10 +227,10 @@ export const VirtualTable = <T extends object>(props: VirtualTableProps<T>): JSX
         </div>
       </div>
       <div class={styles.footer}>
-        <Text as="span" variant="micro" mono tabular tone="tertiary">
+        <Text as="span" variant="micro" mono tabular tone="tertiary" class={styles.footerText}>
           {translate('velvetData.virtualTable.rowsCount', { count: count() })}
         </Text>
-        <Text as="span" variant="micro" mono tabular tone="tertiary">
+        <Text as="span" variant="micro" mono tabular tone="tertiary" class={styles.footerText}>
           {translate('velvetData.virtualTable.rendering', {
             count: Math.max(0, end() - start()),
             range: visibleRange(),
