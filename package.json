@@ -33,7 +33,7 @@
   "sideEffects": [
     "**/*.css"
   ],
-  "packageManager": "npm@12.2.1",
+  "packageManager": "npm@12.2.2",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "public"
@@ -83,7 +83,7 @@
     "@arethetypeswrong/cli": "^0.18.5",
     "@jankrajewskiit/configs": "^3.26.0",
     "@jankrajewskiit/i18n": "^3.26.0",
-    "@jankrajewskiit/ui": "^3.26.0",
+    "@jankrajewskiit/ui": "^3.26.1",
     "@size-limit/file": "^14.3.0",
     "@types/node": "^26.6.6",
     "@typescript/native": "npm:typescript@^7.0.2",

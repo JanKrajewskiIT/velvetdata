@@ -1,9 +1,7 @@
 .root {
+  composes: root from '../../styles/shared/dataContainer.module.css';
   display: flex;
   flex-direction: column;
-  border: var(--border-width) solid var(--border-default);
-  border-radius: var(--radius-lg);
-  background: var(--bg-raised);
   overflow: hidden;
 }
 
@@ -44,7 +42,7 @@
   display: grid;
   grid-template-columns: var(--data-table-columns);
   align-items: center;
-  height: 38px;
+  height: var(--virtual-table-header-height, 38px);
   background: var(--bg-subtle);
   border-bottom: var(--border-width) solid var(--border-default);
 

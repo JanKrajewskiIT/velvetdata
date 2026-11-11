@@ -1,0 +1,5 @@
+.root {
+  border: var(--border-width) solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-raised);
+}

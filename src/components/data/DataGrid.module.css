@@ -1,9 +1,7 @@
 .root {
+  composes: root from '../../styles/shared/dataContainer.module.css';
   display: flex;
   flex-direction: column;
-  border: var(--border-width) solid var(--border-default);
-  border-radius: var(--radius-lg);
-  background: var(--bg-raised);
   min-width: 0;
 }
 
